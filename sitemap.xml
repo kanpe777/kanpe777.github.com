@@ -1,19 +1,19 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
-        <loc>http://kanpe777.github.io/blog/blog/2013/09/21/test-post/</loc>
+        <loc>http://kanpe777.github.io/blog/2013/09/21/test-post/</loc>
         <lastmod>2013-09-21T01:33:10+09:00</lastmod>
     </url>
     <url>
-        <loc>http://kanpe777.github.io/blog/blog/archives/</loc>
+        <loc>http://kanpe777.github.io/blog/archives/</loc>
         <lastmod>2013-09-21T01:33:10+09:00</lastmod>
     </url>
     <url>
-        <loc>http://kanpe777.github.io/blog/</loc>
+        <loc>http://kanpe777.github.io/</loc>
         <lastmod>2013-09-21T01:33:10+09:00</lastmod>
     </url>
     <url>
-        <loc>http://kanpe777.github.io/blog/robots.txt</loc>
+        <loc>http://kanpe777.github.io/robots.txt</loc>
         <lastmod>2013-09-21T00:12:56+09:00</lastmod>
     </url>
 </urlset>
