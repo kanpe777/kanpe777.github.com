@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: category2 | Kanlog]]></title>
+  <link href="http://kanpe777.github.io/blog/categories/category2/atom.xml" rel="self"/>
+  <link href="http://kanpe777.github.io/"/>
+  <updated>2013-09-21T01:01:19+09:00</updated>
+  <id>http://kanpe777.github.io/</id>
+  <author>
+    <name><![CDATA[kanpe777]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA['test post']]></title>
+    <link href="http://kanpe777.github.io/blog/2013/09/21/test-post/"/>
+    <updated>2013-09-21T00:52:00+09:00</updated>
+    <id>http://kanpe777.github.io/blog/2013/09/21/test-post</id>
+    <content type="html"><![CDATA[<h2>新しい記事の作成方法</h2>
+
+<p>bundle exec rake &ldquo;new_post[&lsquo;記事のタイトル&rsquo;]&rdquo;</p>
+]]></content>
+  </entry>
+  
+</feed>
