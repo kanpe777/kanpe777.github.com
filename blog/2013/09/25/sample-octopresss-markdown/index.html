@@ -3,16 +3,17 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>kanlog</title>
+	<title>Octopress の markdown で遊ぶ - kanlog</title>
     <meta name="author" content="kanpe777">
     
-	<meta name="description" content="Published on: Sep 25th, 2013 Tags: test, test2 source code を書きたい時 ` ` ` バッククォート3つで囲む 1
+	<meta name="description" content="source code を書きたい時 ` ` ` バッククォート3つで囲む 1
 2
 3
 4
 5
 #include &lt;iostream&gt;
-int main(void) \{ std::cout &hellip;">
+int main(void) \{ std::cout &lt;&lt; "HelloWorld\n"; return 0;
+} 行番号が要らない時 &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -96,40 +97,9 @@ int main(void) \{ std::cout &hellip;">
 <div id="toload">
 <!-- begin toload --> 
     <div id="content" class="inner">
-        
-
-
-    <article class="post">
-	<h2 class="title">
-		
-		<a href="/blog/2013/09/25/sample-octopresss-markdown/">
-		
-			Octopress の Markdown で遊ぶ</a>
-	</h2>
-    <div class="entry-content">
-    <div class="meta">
-      <div class="date">Published on: 
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-09-25T01:19:00+09:00" pubdate data-updated="true">Sep 25<span>th</span>, 2013</time></div>
-      <div class="tags">Tags: 
-
-
-	<a class='category' href='/blog/categories/test/'>test</a>, <a class='category' href='/blog/categories/test2/'>test2</a>
-
-
-</div>
-    </div>
-		<h3>source code を書きたい時</h3>
+        <article class="post">
+	<h2 class="title">Octopress の Markdown で遊ぶ</h2>
+	<div class="entry-content"><h3>source code を書きたい時</h3>
 
 <p>` ` ` バッククォート3つで囲む</p>
 
@@ -306,85 +276,26 @@ a</p>
 
 <p>結果
 <img src="http://cdn-ak.f.st-hatena.com/images/fotolife/n/naoto5959/20120422/20120422230627.png" alt="代替テキスト" /></p>
-
-		
-		
-	</div>
+</div>
 
 <div class="meta">
 	
 </div>
 </article>
 
-
-    <article class="post">
-	<h2 class="title">
-		
-		<a href="/blog/2013/09/21/test-post/">
-		
-			TestPost OctopressMemo</a>
-	</h2>
-    <div class="entry-content">
-    <div class="meta">
-      <div class="date">Published on: 
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-09-21T00:52:00+09:00" pubdate data-updated="true">Sep 21<span>st</span>, 2013</time></div>
-      <div class="tags">Tags: 
-
-
-	<a class='category' href='/blog/categories/test/'>test</a>
-
-
-</div>
-    </div>
-		<h2>localでの走らせ方</h2>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>bundle exec rake preview</span></code></pre></td></tr></table></div></figure>
-
-
-<p><a href="http://localhost:4000/">http://localhost:4000/</a></p>
-
-<h2>新しい記事の作成方法</h2>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>bundle exec rake "new_post['記事のタイトル']"</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>編集場所</h2>
-
-<p>source/_posts</p>
-
-<h2>デプロイ方法</h2>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>bundle exec rake gen\_deploy</span></code></pre></td></tr></table></div></figure>
-
-
-		
-		
-	</div>
-
-<div class="meta">
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
 	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
 </div>
-</article>
 
-<nav id="pagenavi">
-    
-    
-    <div class="center"><a href="/blog/archives">Blog Archives</a></div>
-</nav>
+
 
     </div>
     <footer id="footer">

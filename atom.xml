@@ -4,7 +4,7 @@
   <title><![CDATA[kanlog]]></title>
   <link href="http://kanpe777.github.io/atom.xml" rel="self"/>
   <link href="http://kanpe777.github.io/"/>
-  <updated>2013-09-21T11:31:48+09:00</updated>
+  <updated>2014-01-12T13:40:04+09:00</updated>
   <id>http://kanpe777.github.io/</id>
   <author>
     <name><![CDATA[kanpe777]]></name>
@@ -14,13 +14,208 @@
 
   
   <entry>
+    <title type="html"><![CDATA[Octopress の markdown で遊ぶ]]></title>
+    <link href="http://kanpe777.github.io/blog/2013/09/25/sample-octopresss-markdown/"/>
+    <updated>2013-09-25T01:19:00+09:00</updated>
+    <id>http://kanpe777.github.io/blog/2013/09/25/sample-octopresss-markdown</id>
+    <content type="html"><![CDATA[<h3>source code を書きたい時</h3>
+
+<p>` ` ` バッククォート3つで囲む</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>#include &lt;iostream&gt;
+</span><span class='line'>int main(void) \{
+</span><span class='line'>    std::cout &lt;&lt; "HelloWorld\n";
+</span><span class='line'>    return 0;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>行番号が要らない時</h3>
+
+<p>先頭に4文字ほど空白をあける</p>
+
+<pre><code>git add .
+</code></pre>
+
+<h3>nemui</h3>
+
+<p>初めてのkobitoMarkdown　練習用　投稿テストも兼ねて
+一番上の行の文字列は大きくなる</p>
+
+<p>サンプルでついてくるcheatsheetの日本語板
+<a href="http://kobito.qiita.com/ja/docs/about-markdown">http://kobito.qiita.com/ja/docs/about-markdown</a>
+ここにもある</p>
+
+<h2>見出し</h2>
+
+<p>-を文字列の下に連続してやると線が引かれる</p>
+
+<h2>source codeの埋め込み</h2>
+
+<p>`を3つで（要空白行）</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>#include &lt;iostrem&gt;
+</span><span class='line'>int main(void) {
+</span><span class='line'>    std::cout &lt;&lt; "HelloWorld" &lt;&lt; std::endl;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>a
+a</p>
+
+<p>｀(半角)で囲んだ文字列は以下のようになる
+<code>このようになる</code></p>
+
+<p>a
+a
+a</p>
+
+<h2>入れ子</h2>
+
+<blockquote><p> &lsquo;>&#8217;で入れ子可能</p>
+
+<blockquote><p>空白行改行をして>>でさらに入れ子</p>
+
+<blockquote><p>test</p></blockquote></blockquote></blockquote>
+
+<h2>箇条書き(・)</h2>
+
+<p>&ndash;(or * or +)と半角スペースで箇条書きのようにできる
+半角スペースを先に入れると・を入れ子に可能</p>
+
+<ul>
+<li><p>aiueo</p>
+
+<ul>
+<li><p>aiueo</p>
+
+<ul>
+<li> aiueo</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>aiueo</p></li>
+<li><p>aiueo</p></li>
+</ul>
+
+
+<h2>箇条書き(番号)</h2>
+
+<p>数字 ＋ 「.(ドット)」 + 「半角スペース」で可能</p>
+
+<ol>
+<li>foo</li>
+<li>bar</li>
+<li>番号をネスト…そうすると強制的に番号が最初から</li>
+<li>上の行は3.ってかいて、この行は4.って書いても</li>
+</ol>
+
+
+<h2>書体</h2>
+
+<p><em>*では挟むとItalic</em>
+<strong>**で挟むとBold</strong>
+<strong><em>***で挟むとBold + Italic</em></strong></p>
+
+<h2>表(Tables)</h2>
+
+<table>
+<thead>
+<tr>
+<th></th>
+<th align="left"> Left align </th>
+<th align="right"> Right align </th>
+<th align="center"> Center align </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td align="left"> This       </td>
+<td align="right">        This </td>
+<td align="center">     This     |</td>
+</tr>
+<tr>
+<td></td>
+<td align="left"> column     </td>
+<td align="right">      column </td>
+<td align="center">    column    |</td>
+</tr>
+<tr>
+<td></td>
+<td align="left"> will       </td>
+<td align="right">        will </td>
+<td align="center">     will     |</td>
+</tr>
+<tr>
+<td></td>
+<td align="left"> be         </td>
+<td align="right">          be </td>
+<td align="center">      be      |</td>
+</tr>
+<tr>
+<td></td>
+<td align="left"> left       </td>
+<td align="right">       right </td>
+<td align="center">    center    |</td>
+</tr>
+<tr>
+<td></td>
+<td align="left"> aligned    </td>
+<td align="right">     aligned </td>
+<td align="center">   aligned    |</td>
+</tr>
+</tbody>
+</table>
+
+
+<h2>画像の差し込み</h2>
+
+<p>ローカルの画像はドロップでできた(1.6からの機能)
+<a href="https://qiita-image-store.s3.amazonaws.com/0/10722/d5636e4f-176d-385a-0ccb-2900a26ee0e6.png" title="Screen Shot 2013-06-07 at 11.33.09.png">Screen Shot 2013-06-07 at 11.33.09.png</a></p>
+
+<p><img src="https://qiita-image-store.s3.amazonaws.com/0/10722/40b01148-f77b-0a46-5a9c-582fac28341b.png" title="mig.png" alt="mig.png" /></p>
+
+<p>web上の画像は
+![代替テキスト?]（URL）
+※丸括弧は半角</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>![代替テキスト](http://cdn-ak.f.st-hatena.com/images/fotolife/n/naoto5959/20120422/20120422230627.png)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>結果
+<img src="http://cdn-ak.f.st-hatena.com/images/fotolife/n/naoto5959/20120422/20120422230627.png" alt="代替テキスト" /></p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[TestPost OctopressMemo]]></title>
     <link href="http://kanpe777.github.io/blog/2013/09/21/test-post/"/>
     <updated>2013-09-21T00:52:00+09:00</updated>
     <id>http://kanpe777.github.io/blog/2013/09/21/test-post</id>
-    <content type="html"><![CDATA[<h2>新しい記事の作成方法</h2>
+    <content type="html"><![CDATA[<h2>localでの走らせ方</h2>
 
-<p>bundle exec rake &ldquo;new_post[&lsquo;記事のタイトル&rsquo;]&rdquo;</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>bundle exec rake preview</span></code></pre></td></tr></table></div></figure>
+
+
+<p><a href="http://localhost:4000/">http://localhost:4000/</a></p>
+
+<h2>新しい記事の作成方法</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>bundle exec rake "new_post['記事のタイトル']"</span></code></pre></td></tr></table></div></figure>
+
 
 <h2>編集場所</h2>
 
@@ -28,7 +223,9 @@
 
 <h2>デプロイ方法</h2>
 
-<p>bundle exec rake gen_deploy</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>bundle exec rake gen\_deploy</span></code></pre></td></tr></table></div></figure>
+
 ]]></content>
   </entry>
   
