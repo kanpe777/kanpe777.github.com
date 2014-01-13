@@ -6,13 +6,10 @@
 	<title>kanlog</title>
     <meta name="author" content="kanpe777">
     
-	<meta name="description" content="Published on: Sep 25th, 2013 Tags: test, test2 source code を書きたい時 ` ` ` バッククォート3つで囲む 1
-2
-3
-4
-5
-#include &lt;iostream&gt;
-int main(void) \{ std::cout &hellip;">
+	<meta name="description" content="Published on: Jan 13th, 2014 Tags: CentOS, PostgreSQL, RoR やったこと PostgreSQLのrpmをwgetしてrpm -ivh
+yum で install
+gem install pg
+gem install rails &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -97,6 +94,385 @@ int main(void) \{ std::cout &hellip;">
 <!-- begin toload --> 
     <div id="content" class="inner">
         
+
+
+    <article class="post">
+	<h2 class="title">
+		
+		<a href="/blog/2014/01/13/install-rails-4-dot-0-1-and-postgresql-9-dot-3-on-centos/">
+		
+			CentOSにRails4.0.1とPostgreSQL9.3をinstallするまで</a>
+	</h2>
+    <div class="entry-content">
+    <div class="meta">
+      <div class="date">Published on: 
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-01-13T20:12:00+09:00" pubdate data-updated="true">Jan 13<span>th</span>, 2014</time></div>
+      <div class="tags">Tags: 
+
+
+	<a class='category' href='/blog/categories/centos/'>CentOS</a>, <a class='category' href='/blog/categories/postgresql/'>PostgreSQL</a>, <a class='category' href='/blog/categories/ror/'>RoR</a>
+
+
+</div>
+    </div>
+		<h3>やったこと</h3>
+
+<ul>
+<li>PostgreSQLのrpmをwgetしてrpm -ivh</li>
+<li>yum で install</li>
+<li>gem install pg</li>
+<li>gem install rails</li>
+</ul>
+
+
+<h3>PostgreSQL</h3>
+
+<h4>installまで</h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ wget -P /tmp http://yum.postgresql.org/9.3/redhat/rhel-6-x86_64/pgdg-centos93-9.3-1.noarch.rpm
+</span><span class='line'>$ sudo rpm -ivh /tmp/pgdg-centos93-9.3-1.noarch.rpm
+</span><span class='line'>$ sudo yum install -y postgresql93-server postgresql93-devel postgresql93-contrib</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>DBの初期化 &amp; 起動</h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ sudo /etc/rc.d/init.d/postgresql-9.3 initdb
+</span><span class='line'>$ sudo /etc/rc.d/init.d/postgresql-9.3 start</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>サーバ起動時にPostgresが起動するように</h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ sudo chkconfig postgresql-9.3 on</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>確認</h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ chkconfig --list | grep postgresql-9.3
+</span><span class='line'>postgresql-9.3  0:off   1:off   2:on    3:on    4:on    5:on    6:off</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>gem install pg</h3>
+
+<h4>事前準備</h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ export PATH=${PATH}:/usr/pgsql-9.3/bin
+</span><span class='line'>$ gem install pg</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>railsのインストール</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ gem install rails</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>確認</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ rails -v</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>参考</h3>
+
+<ul>
+<li><a href="http://morizyun.github.io/blog/postgresql-mac-centos-rails/">Mac MountainLion/CentOS6.4へのPostgreSQL9.2の導入手順</a></li>
+<li><a href="http://morizyun.github.io/blog/heroku-rails4-postgresql-introduction/">Rails4でheroku Pushまでの最短手順 (Haml/bootstrap 3.0/postgresql or MySQL)</a></li>
+</ul>
+
+
+		
+		
+	</div>
+
+<div class="meta">
+	
+</div>
+</article>
+
+
+    <article class="post">
+	<h2 class="title">
+		
+		<a href="/blog/2014/01/13/install-rbenv-on-centos-6-dot-5/">
+		
+			CentOS 6.5 にrbenvでrubyをインストールするまで</a>
+	</h2>
+    <div class="entry-content">
+    <div class="meta">
+      <div class="date">Published on: 
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-01-13T17:54:00+09:00" pubdate data-updated="true">Jan 13<span>th</span>, 2014</time></div>
+      <div class="tags">Tags: 
+
+
+	<a class='category' href='/blog/categories/centos/'>CentOS</a>, <a class='category' href='/blog/categories/rbenv/'>rbenv</a>
+
+
+</div>
+    </div>
+		<h3>やったこと</h3>
+
+<ol>
+<li>rbenvのインストール</li>
+<li>ruby-buildのインストール</li>
+<li>rbenvでrubyのインストール</li>
+</ol>
+
+
+<h3>1. rbenv</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git clone git://github.com/sstephenson/rbenv.git ~/.rbenv
+</span><span class='line'>$ echo 'export PATH="$HOME/.rbenv/bin:$PATH"' &gt;&gt; ~/.zshrc
+</span><span class='line'>$ echo 'eval "$(rbenv init -)"' &gt;&gt; ~/.zshrc </span></code></pre></td></tr></table></div></figure>
+
+
+<h3>2. ruby-build</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git clone git://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
+</span><span class='line'>$ cd ~/.rbenv/plugins/ruby-build
+</span><span class='line'>$ sudo ./install.sh</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>3. ruby 2.1のインストール</h3>
+
+<ul>
+<li>依存系ファイルのインストール</li>
+<li>install</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ yum install --enablerepo=epel make gcc zlib-devel openssl-devel readline-devel ncurses-devel gdbm-devel db4-devel libffi-devel tk-devel libyaml-devel
+</span><span class='line'>$ rbenv install 2.1.0
+</span><span class='line'>$ rbenv rehash
+</span><span class='line'>$ rbenv global 2.1.0
+</span><span class='line'>$ ruby -v で確認</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>おまけ: rbenvでインストール可能なやつ一覧</h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'> $ rbenv install -l
+</span><span class='line'>...
+</span><span class='line'>  2.0.0-rc2
+</span><span class='line'>  2.1.0
+</span><span class='line'>  2.1.0-dev
+</span><span class='line'>  2.1.0-preview1
+</span><span class='line'>  2.1.0-preview2
+</span><span class='line'>  2.1.0-rc1
+</span><span class='line'>  2.2.0-dev
+</span><span class='line'>...</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>参考</h3>
+
+<ul>
+<li><a href="http://qiita.com/IK12_info/items/641fbdc4082e9f56f1c5">CentOS ruby-build, rbenvのインストール方法(Qiita)</a></li>
+<li><a href="http://nomnel.net/blog/centos-system-wide-rbenv-and-ruby-build/">CentOSでsystem wideなrbenv+ruby-build環境を構築する</a></li>
+</ul>
+
+
+		
+		
+	</div>
+
+<div class="meta">
+	
+</div>
+</article>
+
+
+    <article class="post">
+	<h2 class="title">
+		
+		<a href="/blog/2014/01/12/yum-install-emacs24-on-centos-6-dot-5/">
+		
+			Yum Install Emacs24 on CentOS 6.5</a>
+	</h2>
+    <div class="entry-content">
+    <div class="meta">
+      <div class="date">Published on: 
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-01-12T14:48:00+09:00" pubdate data-updated="true">Jan 12<span>th</span>, 2014</time></div>
+      <div class="tags">Tags: 
+
+
+	<a class='category' href='/blog/categories/centos/'>CentOS</a>, <a class='category' href='/blog/categories/emacs/'>Emacs</a>
+
+
+</div>
+    </div>
+		<h3>目的</h3>
+
+<ul>
+<li>sourceからではなく、yumコマンドでemacs24をCentOSに入れる</li>
+</ul>
+
+
+<h3>やったこと</h3>
+
+<ul>
+<li>wgetコマンドのインストール</li>
+<li>yumのリポジトリの追加</li>
+<li>yum rpm -import</li>
+<li>yum install emacs-24.2-4.el6.x86_64</li>
+</ul>
+
+
+<h3>詳細</h3>
+
+<h4>参考:<a href="http://vitalvastness.wordpress.com/2013/07/03/installing-emacs-24-on-centos-6/comment-page-1/">Installing Emacs 24 on Centos 6</a></h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'> $ cd /etc/yum.repos.d
+</span><span class='line'> $ sudo wget http://pj.freefaculty.org/EL/pjku.repo
+</span><span class='line'> $ sudo rpm --import http://pj.freefaculty.org/EL/PaulJohnson-BinaryPackageSigningKey
+</span><span class='line'> $ sudo yum install emacs-24.2-4.el6.x86_64
+</span><span class='line'> $ emacs -versionで確認</span></code></pre></td></tr></table></div></figure>
+
+
+		
+		
+	</div>
+
+<div class="meta">
+	
+</div>
+</article>
+
+
+    <article class="post">
+	<h2 class="title">
+		
+		<a href="/blog/2014/01/12/install-centos-6-dot-5-by-vagarant/">
+		
+			VagrantでCentOS 6.5 をインストール</a>
+	</h2>
+    <div class="entry-content">
+    <div class="meta">
+      <div class="date">Published on: 
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-01-12T13:41:00+09:00" pubdate data-updated="true">Jan 12<span>th</span>, 2014</time></div>
+      <div class="tags">Tags: 
+
+
+	<a class='category' href='/blog/categories/centos/'>CentOS</a>, <a class='category' href='/blog/categories/vagrant/'>Vagrant</a>
+
+
+</div>
+    </div>
+		<h3>やったこと</h3>
+
+<ul>
+<li>最新版のVagrantのインストール(1.2.7 &ndash;> 1.4.3)</li>
+<li>最新版のVirtualBoxのインストール(4.2.12 &ndash;> 4.3.6)</li>
+<li>vagrant box add コマンドでCentOS 6.5 のboxを追加する</li>
+<li>vagrant init コマンドでインストール</li>
+<li>vagrant up コマンドで起動</li>
+</ul>
+
+
+<h3>詳細</h3>
+
+<h4>参考:<a href="http://www.vagrantbox.es/">Vagrantbox.es</a></h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'> $ vagrant box add centos65-x86_64-20131205 https://github.com/2creatives/vagrant-centos/releases/download/v6.5.1/centos65-x86_64-20131205.box
+</span><span class='line'> $ mkdir centos_6.5.1
+</span><span class='line'> $ cd centos_6.5.1
+</span><span class='line'> $ vagrant init centos65-x86_64-20131205
+</span><span class='line'> $ vagrant up
+</span><span class='line'> $ vagrant ssh</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>vagrant ssh</code> コマンドで確認可能</p>
+
+		
+		
+	</div>
+
+<div class="meta">
+	
+</div>
+</article>
 
 
     <article class="post">

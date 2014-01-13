@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: rbenv | kanlog]]></title>
+  <link href="http://kanpe777.github.io/blog/categories/rbenv/atom.xml" rel="self"/>
+  <link href="http://kanpe777.github.io/"/>
+  <updated>2014-01-13T23:24:39+09:00</updated>
+  <id>http://kanpe777.github.io/</id>
+  <author>
+    <name><![CDATA[kanpe777]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[CentOS 6.5 にrbenvでrubyをインストールするまで]]></title>
+    <link href="http://kanpe777.github.io/blog/2014/01/13/install-rbenv-on-centos-6-dot-5/"/>
+    <updated>2014-01-13T17:54:00+09:00</updated>
+    <id>http://kanpe777.github.io/blog/2014/01/13/install-rbenv-on-centos-6-dot-5</id>
+    <content type="html"><![CDATA[<h3>やったこと</h3>
+
+<ol>
+<li>rbenvのインストール</li>
+<li>ruby-buildのインストール</li>
+<li>rbenvでrubyのインストール</li>
+</ol>
+
+
+<h3>1. rbenv</h3>
+
+<p><code>
+$ git clone git://github.com/sstephenson/rbenv.git ~/.rbenv
+$ echo 'export PATH="$HOME/.rbenv/bin:$PATH"' &gt;&gt; ~/.zshrc
+$ echo 'eval "$(rbenv init -)"' &gt;&gt; ~/.zshrc
+</code></p>
+
+<h3>2. ruby-build</h3>
+
+<p><code>
+$ git clone git://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
+$ cd ~/.rbenv/plugins/ruby-build
+$ sudo ./install.sh
+</code></p>
+
+<h3>3. ruby 2.1のインストール</h3>
+
+<ul>
+<li>依存系ファイルのインストール</li>
+<li>install
+<code>
+$ yum install --enablerepo=epel make gcc zlib-devel openssl-devel readline-devel ncurses-devel gdbm-devel db4-devel libffi-devel tk-devel libyaml-devel
+$ rbenv install 2.1.0
+$ rbenv rehash
+$ rbenv global 2.1.0
+$ ruby -v で確認
+</code></li>
+</ul>
+
+
+<h4>おまけ: rbenvでインストール可能なやつ一覧</h4>
+
+<p><code>
+ $ rbenv install -l
+...
+  2.0.0-rc2
+  2.1.0
+  2.1.0-dev
+  2.1.0-preview1
+  2.1.0-preview2
+  2.1.0-rc1
+  2.2.0-dev
+...
+</code></p>
+
+<h3>参考</h3>
+
+<ul>
+<li><a href="http://qiita.com/IK12_info/items/641fbdc4082e9f56f1c5">CentOS ruby-build, rbenvのインストール方法(Qiita)</a></li>
+<li><a href="http://nomnel.net/blog/centos-system-wide-rbenv-and-ruby-build/">CentOSでsystem wideなrbenv+ruby-build環境を構築する</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

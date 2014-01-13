@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Emacs | kanlog]]></title>
+  <link href="http://kanpe777.github.io/blog/categories/emacs/atom.xml" rel="self"/>
+  <link href="http://kanpe777.github.io/"/>
+  <updated>2014-01-13T23:24:39+09:00</updated>
+  <id>http://kanpe777.github.io/</id>
+  <author>
+    <name><![CDATA[kanpe777]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[yum install emacs24 on CentOS 6.5]]></title>
+    <link href="http://kanpe777.github.io/blog/2014/01/12/yum-install-emacs24-on-centos-6-dot-5/"/>
+    <updated>2014-01-12T14:48:00+09:00</updated>
+    <id>http://kanpe777.github.io/blog/2014/01/12/yum-install-emacs24-on-centos-6-dot-5</id>
+    <content type="html"><![CDATA[<h3>目的</h3>
+
+<ul>
+<li>sourceからではなく、yumコマンドでemacs24をCentOSに入れる</li>
+</ul>
+
+
+<h3>やったこと</h3>
+
+<ul>
+<li>wgetコマンドのインストール</li>
+<li>yumのリポジトリの追加</li>
+<li>yum rpm -import</li>
+<li>yum install emacs-24.2-4.el6.x86_64</li>
+</ul>
+
+
+<h3>詳細</h3>
+
+<h4>参考:<a href="http://vitalvastness.wordpress.com/2013/07/03/installing-emacs-24-on-centos-6/comment-page-1/">Installing Emacs 24 on Centos 6</a></h4>
+
+<p><code>
+ $ cd /etc/yum.repos.d
+ $ sudo wget http://pj.freefaculty.org/EL/pjku.repo
+ $ sudo rpm --import http://pj.freefaculty.org/EL/PaulJohnson-BinaryPackageSigningKey
+ $ sudo yum install emacs-24.2-4.el6.x86_64
+ $ emacs -versionで確認
+</code></p>
+]]></content>
+  </entry>
+  
+</feed>

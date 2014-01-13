@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: RoR | kanlog]]></title>
+  <link href="http://kanpe777.github.io/blog/categories/ror/atom.xml" rel="self"/>
+  <link href="http://kanpe777.github.io/"/>
+  <updated>2014-01-13T23:24:39+09:00</updated>
+  <id>http://kanpe777.github.io/</id>
+  <author>
+    <name><![CDATA[kanpe777]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[CentOSにRails4.0.1とPostgreSQL9.3をinstallするまで]]></title>
+    <link href="http://kanpe777.github.io/blog/2014/01/13/install-rails-4-dot-0-1-and-postgresql-9-dot-3-on-centos/"/>
+    <updated>2014-01-13T20:12:00+09:00</updated>
+    <id>http://kanpe777.github.io/blog/2014/01/13/install-rails-4-dot-0-1-and-postgresql-9-dot-3-on-centos</id>
+    <content type="html"><![CDATA[<h3>やったこと</h3>
+
+<ul>
+<li>PostgreSQLのrpmをwgetしてrpm -ivh</li>
+<li>yum で install</li>
+<li>gem install pg</li>
+<li>gem install rails</li>
+</ul>
+
+
+<h3>PostgreSQL</h3>
+
+<h4>installまで</h4>
+
+<p><code>
+$ wget -P /tmp http://yum.postgresql.org/9.3/redhat/rhel-6-x86_64/pgdg-centos93-9.3-1.noarch.rpm
+$ sudo rpm -ivh /tmp/pgdg-centos93-9.3-1.noarch.rpm
+$ sudo yum install -y postgresql93-server postgresql93-devel postgresql93-contrib
+</code></p>
+
+<h4>DBの初期化 &amp; 起動</h4>
+
+<p><code>
+$ sudo /etc/rc.d/init.d/postgresql-9.3 initdb
+$ sudo /etc/rc.d/init.d/postgresql-9.3 start
+</code></p>
+
+<h4>サーバ起動時にPostgresが起動するように</h4>
+
+<p><code>
+$ sudo chkconfig postgresql-9.3 on
+</code></p>
+
+<h4>確認</h4>
+
+<p><code>
+$ chkconfig --list | grep postgresql-9.3
+postgresql-9.3  0:off   1:off   2:on    3:on    4:on    5:on    6:off
+</code></p>
+
+<h3>gem install pg</h3>
+
+<h4>事前準備</h4>
+
+<p><code>
+$ export PATH=${PATH}:/usr/pgsql-9.3/bin
+$ gem install pg
+</code></p>
+
+<h3>railsのインストール</h3>
+
+<p><code>
+$ gem install rails
+</code></p>
+
+<h3>確認</h3>
+
+<p><code>
+$ rails -v
+</code></p>
+
+<h3>参考</h3>
+
+<ul>
+<li><a href="http://morizyun.github.io/blog/postgresql-mac-centos-rails/">Mac MountainLion/CentOS6.4へのPostgreSQL9.2の導入手順</a></li>
+<li><a href="http://morizyun.github.io/blog/heroku-rails4-postgresql-introduction/">Rails4でheroku Pushまでの最短手順 (Haml/bootstrap 3.0/postgresql or MySQL)</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>
