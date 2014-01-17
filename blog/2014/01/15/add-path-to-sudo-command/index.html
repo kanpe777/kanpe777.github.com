@@ -3,10 +3,14 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Category: Vagrant - kanlog</title>
+	<title>sudo which gem等でcommand sudo: gem: command not found を解決 - kanlog</title>
     <meta name="author" content="kanpe777">
     
-	<meta name="description" content="Category: Vagrant">
+	<meta name="description" content="環境 CentOSでsystem wideなrbenv+ruby-build環境を構築するでroot側にrbenvが入ってる
+rubyをなんでも1つrbenvでinstallしてある状態 現象 1
+2
+$ sudo gem list 等をすると
+sudo: gem: command not &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -90,47 +94,67 @@
 <div id="toload">
 <!-- begin toload --> 
     <div id="content" class="inner">
-        
+        <article class="post">
+	<h2 class="title">Sudo Which Gem等でcommand Sudo: Gem: Command Not Found を解決</h2>
+	<div class="entry-content"><h2>環境</h2>
+
+<ul>
+<li><a href="http://nomnel.net/blog/centos-system-wide-rbenv-and-ruby-build/">CentOSでsystem wideなrbenv+ruby-build環境を構築する</a>でroot側にrbenvが入ってる</li>
+<li>rubyをなんでも1つrbenvでinstallしてある状態</li>
+</ul>
+
+
+<h2>現象</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ sudo gem list 等をすると
+</span><span class='line'>sudo: gem: command not found</span></code></pre></td></tr></table></div></figure>
+
+
+<p>というのがでる。</p>
+
+<h2>解決方法</h2>
+
+<p>sudoが見に行くPATHに追加する</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ sudo su
+</span><span class='line'>$ visudo</span></code></pre></td></tr></table></div></figure>
+
+
+<p>で以下を変更</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>変更前
+</span><span class='line'>Defaults    secure_path = /sbin:/bin:/usr/sbin:/usr/bin
+</span><span class='line'>変更後
+</span><span class='line'>Defaults    secure_path = /sbin:/bin:/usr/sbin:/usr/bin:/usr/local/rbenv/shims</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+
+<div class="meta">
 	
-
-
-	
-	
-	<section class="archives"><h1 class="year">2014</h1>
-
-<article>
-  <h2 class="title"><a href="/blog/2014/01/17/creating-my-vagrant-box/">Vagrant上で環境を整えて再Box化</a></h2>
-	<div class="meta">
-		<span class="date">Jan 17</span>
-		<span class="tags">
-
-
-	<a class='category' href='/blog/categories/vagrant/'>Vagrant</a>
-
-
-</span>
-	    
-	</div>
+</div>
 </article>
 
-
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
 	
-
-
-<article>
-  <h2 class="title"><a href="/blog/2014/01/12/install-centos-6-dot-5-by-vagarant/">VagrantでCentOS 6.5 をインストール</a></h2>
-	<div class="meta">
-		<span class="date">Jan 12</span>
-		<span class="tags">
-
-
-	<a class='category' href='/blog/categories/centos/'>CentOS</a>, <a class='category' href='/blog/categories/vagrant/'>Vagrant</a>
-
-
-</span>
-	    
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
 	</div>
-</article>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
 
 
 

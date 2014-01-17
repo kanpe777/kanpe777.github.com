@@ -4,7 +4,7 @@
   <title><![CDATA[Category: test | kanlog]]></title>
   <link href="http://kanpe777.github.io/blog/categories/test/atom.xml" rel="self"/>
   <link href="http://kanpe777.github.io/"/>
-  <updated>2014-01-13T23:24:39+09:00</updated>
+  <updated>2014-01-17T17:43:46+09:00</updated>
   <id>http://kanpe777.github.io/</id>
   <author>
     <name><![CDATA[kanpe777]]></name>
@@ -194,37 +194,6 @@ a</p>
 </code>
 結果
 <img src="http://cdn-ak.f.st-hatena.com/images/fotolife/n/naoto5959/20120422/20120422230627.png" alt="代替テキスト" /></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[TestPost OctopressMemo]]></title>
-    <link href="http://kanpe777.github.io/blog/2013/09/21/test-post/"/>
-    <updated>2013-09-21T00:52:00+09:00</updated>
-    <id>http://kanpe777.github.io/blog/2013/09/21/test-post</id>
-    <content type="html"><![CDATA[<h2>localでの走らせ方</h2>
-
-<p><code>
-bundle exec rake preview
-</code></p>
-
-<p><a href="http://localhost:4000/">http://localhost:4000/</a></p>
-
-<h2>新しい記事の作成方法</h2>
-
-<p><code>
-bundle exec rake "new_post['記事のタイトル']"
-</code></p>
-
-<h2>編集場所</h2>
-
-<p>source/_posts</p>
-
-<h2>デプロイ方法</h2>
-
-<p><code>
-bundle exec rake gen\_deploy
-</code></p>
 ]]></content>
   </entry>
   

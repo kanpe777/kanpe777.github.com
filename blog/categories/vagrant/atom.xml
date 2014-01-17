@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Vagrant | kanlog]]></title>
   <link href="http://kanpe777.github.io/blog/categories/vagrant/atom.xml" rel="self"/>
   <link href="http://kanpe777.github.io/"/>
-  <updated>2014-01-13T23:24:39+09:00</updated>
+  <updated>2014-01-17T17:43:46+09:00</updated>
   <id>http://kanpe777.github.io/</id>
   <author>
     <name><![CDATA[kanpe777]]></name>
@@ -12,6 +12,42 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Vagrant上で環境を整えて再Box化]]></title>
+    <link href="http://kanpe777.github.io/blog/2014/01/17/creating-my-vagrant-box/"/>
+    <updated>2014-01-17T16:07:00+09:00</updated>
+    <id>http://kanpe777.github.io/blog/2014/01/17/creating-my-vagrant-box</id>
+    <content type="html"><![CDATA[<h2>環境</h2>
+
+<ul>
+<li>Vagrant 1.4.3</li>
+<li>Virtual Box 4.3.6</li>
+</ul>
+
+
+<h2>やること</h2>
+
+<ul>
+<li>仮想マシン名の確認</li>
+<li>boxの作成</li>
+</ul>
+
+
+<h3>仮想マシン名の確認</h3>
+
+<p><code>
+$ VBoxManage list vms
+</code>
+目的のvmマシンのマシン名をコピー</p>
+
+<h3>boxの作成</h3>
+
+<p><code>
+$ vagrant package --base マシン名 --output 保存先/〇〇.box
+</code></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[VagrantでCentOS 6.5 をインストール]]></title>

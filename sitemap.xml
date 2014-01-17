@@ -2,11 +2,11 @@
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
         <loc>http://kanpe777.github.io/blog/2013/09/21/test-post/</loc>
-        <lastmod>2013-09-25T01:18:06+09:00</lastmod>
+        <lastmod>2014-01-15T13:54:09+09:00</lastmod>
     </url>
     <url>
         <loc>http://kanpe777.github.io/blog/2013/09/25/sample-octopresss-markdown/</loc>
-        <lastmod>2013-09-25T14:12:37+09:00</lastmod>
+        <lastmod>2014-01-15T15:40:16+09:00</lastmod>
     </url>
     <url>
         <loc>http://kanpe777.github.io/blog/2014/01/12/install-centos-6-dot-5-by-vagarant/</loc>
@@ -29,12 +29,20 @@
         <lastmod>2014-01-13T23:22:05+09:00</lastmod>
     </url>
     <url>
+        <loc>http://kanpe777.github.io/blog/2014/01/15/add-path-to-sudo-command/</loc>
+        <lastmod>2014-01-15T12:15:03+09:00</lastmod>
+    </url>
+    <url>
+        <loc>http://kanpe777.github.io/blog/2014/01/17/creating-my-vagrant-box/</loc>
+        <lastmod>2014-01-17T16:16:57+09:00</lastmod>
+    </url>
+    <url>
         <loc>http://kanpe777.github.io/blog/archives/</loc>
-        <lastmod>2014-01-13T23:22:05+09:00</lastmod>
+        <lastmod>2014-01-17T16:16:57+09:00</lastmod>
     </url>
     <url>
         <loc>http://kanpe777.github.io/</loc>
-        <lastmod>2014-01-13T23:22:05+09:00</lastmod>
+        <lastmod>2014-01-17T16:16:57+09:00</lastmod>
     </url>
     <url>
         <loc>http://kanpe777.github.io/robots.txt</loc>

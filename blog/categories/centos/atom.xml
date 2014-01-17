@@ -4,7 +4,7 @@
   <title><![CDATA[Category: CentOS | kanlog]]></title>
   <link href="http://kanpe777.github.io/blog/categories/centos/atom.xml" rel="self"/>
   <link href="http://kanpe777.github.io/"/>
-  <updated>2014-01-13T23:24:39+09:00</updated>
+  <updated>2014-01-17T17:43:46+09:00</updated>
   <id>http://kanpe777.github.io/</id>
   <author>
     <name><![CDATA[kanpe777]]></name>
@@ -12,6 +12,46 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[sudo which gem等でcommand sudo: gem: command not found を解決]]></title>
+    <link href="http://kanpe777.github.io/blog/2014/01/15/add-path-to-sudo-command/"/>
+    <updated>2014-01-15T12:04:00+09:00</updated>
+    <id>http://kanpe777.github.io/blog/2014/01/15/add-path-to-sudo-command</id>
+    <content type="html"><![CDATA[<h2>環境</h2>
+
+<ul>
+<li><a href="http://nomnel.net/blog/centos-system-wide-rbenv-and-ruby-build/">CentOSでsystem wideなrbenv+ruby-build環境を構築する</a>でroot側にrbenvが入ってる</li>
+<li>rubyをなんでも1つrbenvでinstallしてある状態</li>
+</ul>
+
+
+<h2>現象</h2>
+
+<p><code>
+$ sudo gem list 等をすると
+sudo: gem: command not found
+</code></p>
+
+<p>というのがでる。</p>
+
+<h2>解決方法</h2>
+
+<p>sudoが見に行くPATHに追加する</p>
+
+<p><code>
+$ sudo su
+$ visudo
+</code>
+で以下を変更
+<code>
+変更前
+Defaults    secure_path = /sbin:/bin:/usr/sbin:/usr/bin
+変更後
+Defaults    secure_path = /sbin:/bin:/usr/sbin:/usr/bin:/usr/local/rbenv/shims
+</code></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[CentOSにRails4.0.1とPostgreSQL9.3をinstallするまで]]></title>
