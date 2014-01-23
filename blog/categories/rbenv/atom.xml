@@ -4,7 +4,7 @@
   <title><![CDATA[Category: rbenv | kanlog]]></title>
   <link href="http://kanpe777.github.io/blog/categories/rbenv/atom.xml" rel="self"/>
   <link href="http://kanpe777.github.io/"/>
-  <updated>2014-01-17T17:43:46+09:00</updated>
+  <updated>2014-01-23T16:42:16+09:00</updated>
   <id>http://kanpe777.github.io/</id>
   <author>
     <name><![CDATA[kanpe777]]></name>
@@ -12,6 +12,285 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[UbuntuにてRoRのインストールからJenkinsの利用まで]]></title>
+    <link href="http://kanpe777.github.io/blog/2014/01/22/first-using-ror-and-jenkins/"/>
+    <updated>2014-01-22T12:53:00+09:00</updated>
+    <id>http://kanpe777.github.io/blog/2014/01/22/first-using-ror-and-jenkins</id>
+    <content type="html"><![CDATA[<p>参考のやつをそのまま試した備忘log</p>
+
+<h2>環境</h2>
+
+<ul>
+<li>Ubuntu 12.04 amd64</li>
+<li>rbenv 0.4.0</li>
+<li>Ruby 2.0.0</li>
+<li>Ruby on Rails 4</li>
+</ul>
+
+
+<h3>必要な物をapt-get</h3>
+
+<p><code>
+$ sudo apt-get install build-essential git curl zlib1g-dev libssl-dev libreadline-dev libyaml-dev libxml2-dev libxslt-dev sqlite3 libsqlite3-dev nodejs
+</code></p>
+
+<h3>rbenv(0.4.0)</h3>
+
+<p><code>
+$ git clone git://github.com/sstephenson/rbenv.git .rbenv
+$ echo 'export PATH="$HOME/.rbenv/bin:$PATH"' &gt;&gt; ~/.bashrc
+$ echo 'eval "$(rbenv init -)"' &gt;&gt; ~/.bashrc
+$ exec $SHELL
+</code></p>
+
+<h3>ruby-build</h3>
+
+<p><code>
+$ mkdir -p ~/.rbenv/plugins
+$ cd ~/.rbenv/plugins
+$ git clone git://github.com/sstephenson/ruby-build.git
+</code></p>
+
+<h3>Ruby(2.0.0)</h3>
+
+<p><code>
+$ rbenv install 2.0.0-p353
+$ rbenv rehash
+$ rbenv global 2.0.0-p353
+</code></p>
+
+<h3>.gemrc</h3>
+
+<p><code>
+$ echo "install: --no-rdoc --no-ri" &gt;&gt; ~/.gemrc
+$ echo "update: --no-rdoc --no-ri" &gt;&gt; ~/.gemrc
+</code></p>
+
+<h3>Bundler</h3>
+
+<p><code>
+$ gem update
+$ gem install bundler
+$ rbenv rehash
+</code></p>
+
+<h3>Ruby on Rails(4.0.2)</h3>
+
+<p><code>
+$ gem install rails
+$ rbenv rehash
+</code></p>
+
+<h3>アプリの作成</h3>
+
+<h4>Testなしで作成</h4>
+
+<p><code>
+$ rails new circle -T
+$ cd circle
+</code></p>
+
+<h4>userメンテ画面をscaffold</h4>
+
+<p><code>
+$ rails g scaffold user name:string age:integer
+</code></p>
+
+<h4>DBの作成 &amp;&amp; テスト用DBの作成</h4>
+
+<p><code>
+$ rake db:migrate
+$ rake db:test:clone
+</code></p>
+
+<h4>rails serveer起動</h4>
+
+<p><code>
+$ rails s
+</code></p>
+
+<p><a href="http://localhost:3000/">http://localhost:3000/</a> にて確認</p>
+
+<h4>Gemfileに<code>rspec-rails</code>を追記</h4>
+
+<p><code>
+$ vim Gemfile
+group :development, :test do
+  gem 'rspec-rails', '~&gt; 2.0'
+end
+</code></p>
+
+<h4>Gemの更新</h4>
+
+<p><code>
+$ bundle install
+</code></p>
+
+<h4>Rspecのセットアップ</h4>
+
+<p><code>
+$ rails generate rspec:install
+</code></p>
+
+<h4>.rspecの以下のように変更</h4>
+
+<p>```</p>
+
+<h1>変更前</h1>
+
+<p>&mdash;color</p>
+
+<h1>変更後</h1>
+
+<p>&mdash;color &mdash;format documentation
+```</p>
+
+<h4>Userモデルに対して、以下のバリデーションの追加</h4>
+
+<p>```
+$ vim app/models/user.rb
+  validates :name,</p>
+
+<pre><code>:presence =&gt; true,
+:length =&gt; {:maximum =&gt; 20}
+</code></pre>
+
+<p>  validates :age,</p>
+
+<pre><code>:presence =&gt; true,
+:numericality =&gt; {:greater_than_or_equal_to =&gt; 0,
+                  :less_than_or_equal_to =&gt; 1000}
+</code></pre>
+
+<p>```</p>
+
+<ul>
+<li>name : 必須入力 &amp;&amp; 最大文字数が20</li>
+<li>age  : 必須入力 &amp;&amp; 範囲が0 &ndash; 1000</li>
+</ul>
+
+
+<h4>UserモデルのTestの記述</h4>
+
+<p><code>
+$ mkdir spec/models
+$ vim spec/models/user_spec.rb
+</code></p>
+
+<p>```</p>
+
+<h1>&ndash;<em>&ndash; coding: utf-8 &ndash;</em>&ndash;</h1>
+
+<p>require &lsquo;spec_helper&rsquo;</p>
+
+<p>describe User do
+  context &lsquo;何も入力しなかった場合&rsquo; do</p>
+
+<pre><code>subject{User.new}
+it {should_not be_valid}
+it{ should have(1).errors_on(:name) }
+it{ should have(2).errors_on(:age) }
+</code></pre>
+
+<p>  end</p>
+
+<p>  context &lsquo;名前が文字数をオーバーしている場合&rsquo; do</p>
+
+<pre><code>subject{User.new(name: 'aaaaaaaaaabbbbbbbbbbc',age: 10)}
+it {should_not be_valid}
+it{ should have(1).errors_on(:name) }
+it{ should have(0).errors_on(:age) }
+</code></pre>
+
+<p>  end</p>
+
+<p>  context &lsquo;年齢が範囲を超えている場合&rsquo; do</p>
+
+<pre><code>subject{User.new(name: 'taro',age: 1001)}
+it {should_not be_valid}
+it{ should have(0).errors_on(:name) }
+it{ should have(1).errors_on(:age) }
+</code></pre>
+
+<p>  end</p>
+
+<p>  context &lsquo;正常なデータがセットされた場合&rsquo; do</p>
+
+<pre><code>subject{User.new(name: 'taro',age: 20)}
+it {should be_valid}
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<h4>rspecの実行</h4>
+
+<p><code>
+$ bundle exec rspec
+...
+Finished in 0.08931 seconds
+10 examples, 0 failures // &lt;-これがでればok
+...
+</code></p>
+
+<h4>Gemfileにcapybaraとturnipの追加</h4>
+
+<p><code>
+$ vim Gemfile
+group :development, :test do
+  gem 'rspec-rails', '~&gt; 2.0'
+  gem 'capybara' # 追記
+  gem 'turnip'   # 追記
+end
+</code></p>
+
+<h4>Gemの更新</h4>
+
+<p><code>
+$ bundle install
+</code></p>
+
+<h4>.rspecファイルの修正</h4>
+
+<p>```
+$ vim .rspec</p>
+
+<h1>変更前</h1>
+
+<p>&mdash;color &mdash;format documentation</p>
+
+<h1>変更後</h1>
+
+<p>-r turnip/rspec &mdash;color &mdash;format documentation
+```</p>
+
+<h4>require の下辺りに追記</h4>
+
+<p>```
+Dir.glob(&ldquo;spec/<em>*/</em>steps.rb&rdquo;) { |f| load f, true}</p>
+
+<p>require &lsquo;capybara/dsl&rsquo;
+require &lsquo;capybara/rspec&rsquo;
+require &lsquo;turnip&rsquo;
+require &lsquo;turnip/capybara&rsquo;
+```</p>
+
+<h4>stepファイルを記述</h4>
+
+<p><code>
+$ mkdir spec/features
+$
+</code></p>
+
+<h2>参考</h2>
+
+<p><a href="http://www.d-wood.com/blog/2013/09/25_4699.html">[Ruby on Rails] Ubuntu に rbenv + Bundler で Rails 4 をインストールする</a>
+<a href="http://www.buildinsider.net/enterprise/jenkins/02">Jenkinsで小さなテストを実行してみよう（Mac OS X＆Linux）</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[CentOS 6.5 にrbenvでrubyをインストールするまで]]></title>
