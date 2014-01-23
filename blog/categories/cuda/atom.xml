@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: CUDA | kanlog]]></title>
+  <link href="http://kanpe777.github.io/blog/categories/cuda/atom.xml" rel="self"/>
+  <link href="http://kanpe777.github.io/"/>
+  <updated>2014-01-23T18:50:06+09:00</updated>
+  <id>http://kanpe777.github.io/</id>
+  <author>
+    <name><![CDATA[kanpe777]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[CUDAの基礎,メモ]]></title>
+    <link href="http://kanpe777.github.io/blog/2014/01/23/what-is-the-cuda/"/>
+    <updated>2014-01-23T17:11:00+09:00</updated>
+    <id>http://kanpe777.github.io/blog/2014/01/23/what-is-the-cuda</id>
+    <content type="html"><![CDATA[<h2>1. CUDAとは</h2>
+
+<ul>
+<li>統合開発環境</li>
+<li>GPUコンピューティング向け</li>
+<li>NVIDIAのGeForceシリーズのGPUが搭載されている必要あり</li>
+</ul>
+
+
+<h2>2. キーワード</h2>
+
+<h3>2.1 スレッド(Thread)</h3>
+
+<ul>
+<li>実行単位</li>
+<li>基本、それぞれのスレッドが非同期で動く
+
+<h3>2.2 ブロック(Block)</h3></li>
+<li>スレッドをまとめたもの</li>
+<li>合計512スレッドまで</li>
+<li>スレッドの組み合わせは3次元表現まで可能(512,16*16,8*8*8)
+
+<h3>2.3 グリッド(Grid)</h3></li>
+<li>ブロックをまとめたもの</li>
+<li>合計65,535ブロックまで</li>
+<li>ブロックの組み合わせは2次元で表現</li>
+</ul>
+
+
+<p><img src="/images/myimages/cuda_image0.png" alt="グリッド、ブロック、スレッドの関係" /></p>
+
+<h3>2.4 カーネル(Kernel)</h3>
+
+<ul>
+<li>GPU側に実行させるプログラムのこと</li>
+<li>このプログラムを書くことを<code>カーネルプログラミング</code>と言う</li>
+<li>カーネルプログラミングをする際、独自の変数と予約語がある</li>
+</ul>
+
+
+<h4>2.4.1 threadIdx.〇〇</h4>
+
+<ul>
+<li>thread index の略?</li>
+<li>カーネルが動作しているスレッドのインデックス番号</li>
+<li>要は何番目のスレッドかわかる</li>
+<li>スレッドは3次元表現までありえるので、threadIdx.x,y,zが存在</li>
+</ul>
+
+
+<h3>2.5 ワープ(Warp)</h3>
+
+<ul>
+<li>スレッドの方では、結局32スレッドずつ動く</li>
+<li>32スレッド = 1ワープ</li>
+<li>よって、スレッドの処理の区切りは32ずつだと良い感じ</li>
+<li>メモリ共有はワープ単位でのみ</li>
+</ul>
+
+
+<h2>3. ここまでのまとめ</h2>
+
+<ul>
+<li>ブロックあたりの最大スレッド数 = 512</li>
+<li>グリッドあたりの最大ブロック数 = 65,535</li>
+<li>ワープあたりのスレッド数       = 32</li>
+</ul>
+
+
+<h2>4. 同期処理(__synchthreads()関数)</h2>
+
+<ul>
+<li>同ブロック内のスレッド全てがこの関数に到達するまで一時停止する</li>
+<li>異なるブロックでは同期はされない</li>
+</ul>
+
+
+<h2>5. ホスト(__host__)とデバイス(__device__)</h2>
+
+<ul>
+<li>CPU = ホスト</li>
+<li>GPU = デバイス</li>
+</ul>
+
+
+<h3>5.1 __global__</h3>
+
+<ul>
+<li>デバイス側</li>
+<li>返り値は常にvoid型</li>
+<li>再帰は不可能</li>
+<li>&lt;&lt;&lt;>>>を使用した実行時の指定が可能</li>
+<li>static変数はもてない</li>
+<li>__global__で指定した関数へのポインタは利用可能</li>
+<li>__host__と同時には無理</li>
+<li>デバイス側での処理が終わる前に呼び出し側に処理が戻る</li>
+<li>シェアードメモリを利用して、256byteまでのデータを渡すことが可能</li>
+</ul>
+
+
+<h3>5.2 __device__</h3>
+
+<ul>
+<li>再帰は不可能</li>
+<li>static変数はもてない</li>
+<li>可変長引数はもてない</li>
+<li>__device__で指定した関数ポインタは利用できない</li>
+</ul>
+
+
+<h3>5.3 __host__</h3>
+
+<ul>
+<li>ホスト側でのみ呼び出せる</li>
+<li>ホスト側の通常の関数</li>
+<li>__global__と同時に使用不可</li>
+<li>__device__と同時に使用可能</li>
+<li>__device__と同時に使用し、ホスト側とデバイス側の両方から呼び出せる関数を作成可能</li>
+<li>__host__, __device__, __global__のどれも選択肢ないとデフォルトは__host__を選択したことになる</li>
+</ul>
+
+
+<h2>6. 関数</h2>
+
+<h3>6.1 krnlVecAdd&lt;&lt;&lt;A, B, C, D>>></h3>
+
+<ul>
+<li>A : dim3型, グリッドの中にあるブロックのサイズ</li>
+<li>B : dim3型, ブロックの中にあるスレッドのサイズ</li>
+<li>C : size_t型, ブロック当たり割り当てるシェアードメモリの容量を、バイト単位で指定(省略可)</li>
+<li>D : ストリームの番号(省略可)</li>
+</ul>
+
+
+<p><code>
+dim3 grid_dimension(8, 8);
+dim3 block_dimension(16, 16, 16);
+krnlVecAdd&lt;&lt;&lt;grid_dimension, block_dimension&gt;&gt;&gt;(A, B, C);
+</code>
+ * グリッドの中に8<em>8のブロックがある
+ * ブロックの中に16</em>16*16のスレッドがある</p>
+]]></content>
+  </entry>
+  
+</feed>

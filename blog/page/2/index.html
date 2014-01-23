@@ -6,8 +6,10 @@
 	<title>kanlog</title>
     <meta name="author" content="kanpe777">
     
-	<meta name="description" content="Published on: Jan 12th, 2014 Tags: CentOS, Vagrant やったこと 最新版のVagrantのインストール(1.2.7 &ndash;> 1.4.3)
-最新版のVirtualBoxのインストール(4.2.12 &ndash;> 4.3.6) &hellip;">
+	<meta name="description" content="Published on: Jan 12th, 2014 Tags: CentOS, Emacs 目的 sourceからではなく、yumコマンドでemacs24をCentOSに入れる やったこと wgetコマンドのインストール
+yumのリポジトリの追加
+yum rpm -import
+yum &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -92,6 +94,79 @@
 <!-- begin toload --> 
     <div id="content" class="inner">
         
+
+
+    <article class="post">
+	<h2 class="title">
+		
+		<a href="/blog/2014/01/12/yum-install-emacs24-on-centos-6-dot-5/">
+		
+			Yum Install Emacs24 on CentOS 6.5</a>
+	</h2>
+    <div class="entry-content">
+    <div class="meta">
+      <div class="date">Published on: 
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-01-12T14:48:00+09:00" pubdate data-updated="true">Jan 12<span>th</span>, 2014</time></div>
+      <div class="tags">Tags: 
+
+
+	<a class='category' href='/blog/categories/centos/'>CentOS</a>, <a class='category' href='/blog/categories/emacs/'>Emacs</a>
+
+
+</div>
+    </div>
+		<h3>目的</h3>
+
+<ul>
+<li>sourceからではなく、yumコマンドでemacs24をCentOSに入れる</li>
+</ul>
+
+
+<h3>やったこと</h3>
+
+<ul>
+<li>wgetコマンドのインストール</li>
+<li>yumのリポジトリの追加</li>
+<li>yum rpm -import</li>
+<li>yum install emacs-24.2-4.el6.x86_64</li>
+</ul>
+
+
+<h3>詳細</h3>
+
+<h4>参考:<a href="http://vitalvastness.wordpress.com/2013/07/03/installing-emacs-24-on-centos-6/comment-page-1/">Installing Emacs 24 on Centos 6</a></h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'> $ cd /etc/yum.repos.d
+</span><span class='line'> $ sudo wget http://pj.freefaculty.org/EL/pjku.repo
+</span><span class='line'> $ sudo rpm --import http://pj.freefaculty.org/EL/PaulJohnson-BinaryPackageSigningKey
+</span><span class='line'> $ sudo yum install emacs-24.2-4.el6.x86_64
+</span><span class='line'> $ emacs -versionで確認</span></code></pre></td></tr></table></div></figure>
+
+
+		
+		
+	</div>
+
+<div class="meta">
+	
+</div>
+</article>
 
 
     <article class="post">
