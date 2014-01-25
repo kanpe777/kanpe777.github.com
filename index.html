@@ -622,18 +622,253 @@ NVIDIAのGeForceシリーズのGPUが搭載されている必要あり 2. キー
 </span><span class='line'>require 'turnip/capybara'</span></code></pre></td></tr></table></div></figure>
 
 
-<h4>stepファイルを記述</h4>
+<h4>featureファイルと、stepファイルを記述</h4>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
+<span class='line-number'>3</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>$ mkdir spec/features
-</span><span class='line'>$ </span></code></pre></td></tr></table></div></figure>
+</span><span class='line'>$ vim spec/features/users.feature
+</span><span class='line'>$ vim spec/steps/users_steps.rb</span></code></pre></td></tr></table></div></figure>
+
+
+<p>spec/features/users.feature の中身</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'># encoding: utf-8
+</span><span class='line'># language: ja
+</span><span class='line'>機能: ユーザー管理
+</span><span class='line'>  ユーザー管理を行いたい。なぜならサークル活動に参加するメンバーを管理する必要があるからだ。
+</span><span class='line'>
+</span><span class='line'>  シナリオ: 一覧画面から新規登録画面に移動する
+</span><span class='line'>    前提 ユーザー管理の一覧画面を開く
+</span><span class='line'>    もし "New User" リンクをクリックする
+</span><span class='line'>    ならば ユーザー管理の新規登録画面が表示される
+</span><span class='line'>
+</span><span class='line'>  シナリオ: 登録画面で登録すると詳細画面に移動する
+</span><span class='line'>    前提 ユーザー管理の新規登録画面を開く
+</span><span class='line'>    もし "Name" に "アリス" と入力する
+</span><span class='line'>    かつ "Age" に "16" と入力する
+</span><span class='line'>    かつ "Create User" ボタンをクリックする
+</span><span class='line'>    ならば ユーザー管理の詳細画面が表示される</span></code></pre></td></tr></table></div></figure>
+
+
+<p>spec/steps/users_steps.rbの中身</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'># encoding: utf-8
+</span><span class='line'>
+</span><span class='line'>step 'ユーザー管理の一覧画面を開く' do
+</span><span class='line'>  visit '/users'
+</span><span class='line'>end
+</span><span class='line'>
+</span><span class='line'>step '画面を目視' do
+</span><span class='line'>  save_and_open_page
+</span><span class='line'>end
+</span><span class='line'>
+</span><span class='line'>step ':name リンクをクリックする' do |name|
+</span><span class='line'>  first(:link, name).click
+</span><span class='line'>end
+</span><span class='line'>
+</span><span class='line'>step ':name ボタンをクリックする' do |name|
+</span><span class='line'>  first(:button, name).click
+</span><span class='line'>end
+</span><span class='line'>
+</span><span class='line'>step 'ユーザー管理の新規登録画面が表示される' do
+</span><span class='line'>  current_path = URI.parse(current_url).path
+</span><span class='line'>  current_path.should == '/users/new'
+</span><span class='line'>end
+</span><span class='line'>
+</span><span class='line'>step 'ユーザー管理の詳細画面が表示される' do
+</span><span class='line'>  current_path = URI.parse(current_url).path
+</span><span class='line'>  current_path.should == '/users/1'
+</span><span class='line'>end
+</span><span class='line'>
+</span><span class='line'>step 'ユーザー管理の新規登録画面を開く' do
+</span><span class='line'>  visit '/users/new'
+</span><span class='line'>end
+</span><span class='line'>
+</span><span class='line'>step ':field に :value と入力する' do |field, value|
+</span><span class='line'>  fill_in(field, :with =&gt; value)
+</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Turnipを実行</h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ bundle exec rspec spec/features/users.feature</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Gitで管理</h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ git init
+</span><span class='line'>$ git config --global color.ui true
+</span><span class='line'>$ git config --global user.email "hoge@fuga.com"
+</span><span class='line'>$ git config --global user.name "kanpe777"
+</span><span class='line'>$ git stage .
+</span><span class='line'>$ git commit -m "Initial commit"</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Jenkins側</h4>
+
+<h4>rbenv Pluginのインストール</h4>
+
+<ul>
+<li><code>Manage Jenkins</code> &ndash;> <code>Plugin Manager</code></li>
+<li><code>Available</code>タブを選択し、<code>RVM Plugin</code>にチェックを入れる</li>
+<li><code>Install without restart</code></li>
+</ul>
+
+
+<h4>Git Pluginのインストール</h4>
+
+<ul>
+<li><code>Manage Jenkins</code> &ndash;> <code>Plugin Manager</code></li>
+<li><code>Available</code>タブを選択し、<code>Git Plugin</code>にチェックを入れる</li>
+<li><code>Download now and install after restart</code></li>
+<li><code>sudo service jenkins restart</code></li>
+</ul>
+
+
+<h4>ジョブの作成</h4>
+
+<ul>
+<li>top</li>
+<li><code>New Job</code></li>
+<li>Job name に「circle」, <code>Build a free-style software project</code>にチェック</li>
+<li><code>OK</code>ボタン</li>
+<li>Souce Code Management の欄で<code>Git</code>を選択</li>
+<li>Repository URLはcircleがある場所(pwd等で確認可能, 自分の場合は/home/vagrant/circle)</li>
+<li>Build Environment欄で<code>rbenv build wrapper</code>にチェック</li>
+<li>Implementationに<code>ruby 1.9.3-p429</code>を記述</li>
+<li>Build欄でAdd build step, <code>Execute shell</code>
+(メモリに注意)</li>
+</ul>
+
+
+<p>Commandの中身</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>bundle install
+</span><span class='line'>bundle exec rake db:migrate
+</span><span class='line'>bundle exec rake db:test:clone
+</span><span class='line'>bundle exec rspec</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li><code>Apply</code> &ndash;> <code>Save</code></li>
+<li>Topにてcircleを選択して、<code>Build Now</code>等でbuild実行</li>
+<li>青いマークが成功、赤いマークが失敗</li>
+</ul>
+
+
+<h4>自動実行</h4>
+
+<ul>
+<li>circle ジョブを選択し、<code>Configure</code>でジョブの設定へ</li>
+<li>Build Triggers欄にて<code>Poll SCM</code>にチェック</li>
+<li><code>H/5 * * * *</code>を記述(意味は5分毎にコミットを確認する)</li>
+</ul>
+
+
+<h4>Build Pipelie の可視化</h4>
+
+<ul>
+<li>Jobを2つ作成
+
+<h4>1つめ：circle_unit_test</h4></li>
+<li>Souce Code Management欄で<code>Git</code>を選択し、リポジトリの場所を指定(自分の場合は/home/vagrant/circle)</li>
+<li>Build Triggers欄で<code>Poll SCM</code>を選択し、<code>H/5 * * * *</code>を記述</li>
+<li>Build 欄で<code>Add build step</code>より、<code>execute shell</code>を選択し、Commandに以下を記述</li>
+</ul>
+
+
+<p>Commandの中身</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>bundle install
+</span><span class='line'>bundle exec rake db:migrate
+</span><span class='line'>bundle exec rake db:test:clone
+</span><span class='line'>bundle exec rspec spec/*/*_spec.rb</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>Post-build Actions欄にて<code>Add post-build action</code>より、<code>Trigger parameterized build on other projects</code>を選択</li>
+<li>Projects to build 欄に<code>circle_integration_test</code>と記述(事前にcircle_integration_testジョブを作成必要あり)</li>
+<li></li>
+</ul>
 
 
 <h2>参考</h2>
 
-<p><a href="http://www.d-wood.com/blog/2013/09/25_4699.html">[Ruby on Rails] Ubuntu に rbenv + Bundler で Rails 4 をインストールする</a>
-<a href="http://www.buildinsider.net/enterprise/jenkins/02">Jenkinsで小さなテストを実行してみよう（Mac OS X＆Linux）</a></p>
+<p><a href="http://www.d-wood.com/blog/2013/09/25_4699.html">[Ruby on Rails] Ubuntu に rbenv + Bundler で Rails 4 をインストールする</a></p>
+
+<p><a href="http://www.buildinsider.net/enterprise/jenkins/02">Jenkinsで小さなテストを実行してみよう（Mac OS X＆Linux）</a></p>
+
+<p><a href="http://www.buildinsider.net/enterprise/jenkins/03">アプリケーションをデプロイしてみよう（Mac OS X＆Linux）</a></p>
 
 		
 		

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Jenkins | kanlog]]></title>
   <link href="http://kanpe777.github.io/blog/categories/jenkins/atom.xml" rel="self"/>
   <link href="http://kanpe777.github.io/"/>
-  <updated>2014-01-23T18:50:06+09:00</updated>
+  <updated>2014-01-25T12:42:39+09:00</updated>
   <id>http://kanpe777.github.io/</id>
   <author>
     <name><![CDATA[kanpe777]]></name>
@@ -278,17 +278,194 @@ require &lsquo;turnip&rsquo;
 require &lsquo;turnip/capybara&rsquo;
 ```</p>
 
-<h4>stepファイルを記述</h4>
+<h4>featureファイルと、stepファイルを記述</h4>
 
 <p><code>
 $ mkdir spec/features
-$
+$ vim spec/features/users.feature
+$ vim spec/steps/users_steps.rb
 </code></p>
+
+<p>spec/features/users.feature の中身
+```</p>
+
+<h1>encoding: utf-8</h1>
+
+<h1>language: ja</h1>
+
+<p>機能: ユーザー管理
+  ユーザー管理を行いたい。なぜならサークル活動に参加するメンバーを管理する必要があるからだ。</p>
+
+<p>  シナリオ: 一覧画面から新規登録画面に移動する</p>
+
+<pre><code>前提 ユーザー管理の一覧画面を開く
+もし "New User" リンクをクリックする
+ならば ユーザー管理の新規登録画面が表示される
+</code></pre>
+
+<p>  シナリオ: 登録画面で登録すると詳細画面に移動する</p>
+
+<pre><code>前提 ユーザー管理の新規登録画面を開く
+もし "Name" に "アリス" と入力する
+かつ "Age" に "16" と入力する
+かつ "Create User" ボタンをクリックする
+ならば ユーザー管理の詳細画面が表示される
+</code></pre>
+
+<p>```</p>
+
+<p>spec/steps/users_steps.rbの中身
+```</p>
+
+<h1>encoding: utf-8</h1>
+
+<p>step &lsquo;ユーザー管理の一覧画面を開く&rsquo; do
+  visit &lsquo;/users&rsquo;
+end</p>
+
+<p>step &lsquo;画面を目視&rsquo; do
+  save_and_open_page
+end</p>
+
+<p>step &lsquo;:name リンクをクリックする&rsquo; do |name|
+  first(:link, name).click
+end</p>
+
+<p>step &lsquo;:name ボタンをクリックする&rsquo; do |name|
+  first(:button, name).click
+end</p>
+
+<p>step &lsquo;ユーザー管理の新規登録画面が表示される&rsquo; do
+  current_path = URI.parse(current_url).path
+  current_path.should == &lsquo;/users/new&rsquo;
+end</p>
+
+<p>step &lsquo;ユーザー管理の詳細画面が表示される&rsquo; do
+  current_path = URI.parse(current_url).path
+  current_path.should == &lsquo;/users/1&rsquo;
+end</p>
+
+<p>step &lsquo;ユーザー管理の新規登録画面を開く&rsquo; do
+  visit &lsquo;/users/new&rsquo;
+end</p>
+
+<p>step &lsquo;:field に :value と入力する&rsquo; do |field, value|
+  fill_in(field, :with => value)
+end
+```</p>
+
+<h4>Turnipを実行</h4>
+
+<p><code>
+$ bundle exec rspec spec/features/users.feature
+</code></p>
+
+<h4>Gitで管理</h4>
+
+<p><code>
+$ git init
+$ git config --global color.ui true
+$ git config --global user.email "hoge@fuga.com"
+$ git config --global user.name "kanpe777"
+$ git stage .
+$ git commit -m "Initial commit"
+</code></p>
+
+<h4>Jenkins側</h4>
+
+<h4>rbenv Pluginのインストール</h4>
+
+<ul>
+<li><code>Manage Jenkins</code> &ndash;> <code>Plugin Manager</code></li>
+<li><code>Available</code>タブを選択し、<code>RVM Plugin</code>にチェックを入れる</li>
+<li><code>Install without restart</code></li>
+</ul>
+
+
+<h4>Git Pluginのインストール</h4>
+
+<ul>
+<li><code>Manage Jenkins</code> &ndash;> <code>Plugin Manager</code></li>
+<li><code>Available</code>タブを選択し、<code>Git Plugin</code>にチェックを入れる</li>
+<li><code>Download now and install after restart</code></li>
+<li><code>sudo service jenkins restart</code></li>
+</ul>
+
+
+<h4>ジョブの作成</h4>
+
+<ul>
+<li>top</li>
+<li><code>New Job</code></li>
+<li>Job name に「circle」, <code>Build a free-style software project</code>にチェック</li>
+<li><code>OK</code>ボタン</li>
+<li>Souce Code Management の欄で<code>Git</code>を選択</li>
+<li>Repository URLはcircleがある場所(pwd等で確認可能, 自分の場合は/home/vagrant/circle)</li>
+<li>Build Environment欄で<code>rbenv build wrapper</code>にチェック</li>
+<li>Implementationに<code>ruby 1.9.3-p429</code>を記述</li>
+<li>Build欄でAdd build step, <code>Execute shell</code>
+(メモリに注意)</li>
+</ul>
+
+
+<p>Commandの中身
+<code>
+bundle install
+bundle exec rake db:migrate
+bundle exec rake db:test:clone
+bundle exec rspec
+</code></p>
+
+<ul>
+<li><code>Apply</code> &ndash;> <code>Save</code></li>
+<li>Topにてcircleを選択して、<code>Build Now</code>等でbuild実行</li>
+<li>青いマークが成功、赤いマークが失敗</li>
+</ul>
+
+
+<h4>自動実行</h4>
+
+<ul>
+<li>circle ジョブを選択し、<code>Configure</code>でジョブの設定へ</li>
+<li>Build Triggers欄にて<code>Poll SCM</code>にチェック</li>
+<li><code>H/5 * * * *</code>を記述(意味は5分毎にコミットを確認する)</li>
+</ul>
+
+
+<h4>Build Pipelie の可視化</h4>
+
+<ul>
+<li>Jobを2つ作成
+
+<h4>1つめ：circle_unit_test</h4></li>
+<li>Souce Code Management欄で<code>Git</code>を選択し、リポジトリの場所を指定(自分の場合は/home/vagrant/circle)</li>
+<li>Build Triggers欄で<code>Poll SCM</code>を選択し、<code>H/5 * * * *</code>を記述</li>
+<li>Build 欄で<code>Add build step</code>より、<code>execute shell</code>を選択し、Commandに以下を記述</li>
+</ul>
+
+
+<p>Commandの中身
+<code>
+bundle install
+bundle exec rake db:migrate
+bundle exec rake db:test:clone
+bundle exec rspec spec/*/*_spec.rb
+</code></p>
+
+<ul>
+<li>Post-build Actions欄にて<code>Add post-build action</code>より、<code>Trigger parameterized build on other projects</code>を選択</li>
+<li>Projects to build 欄に<code>circle_integration_test</code>と記述(事前にcircle_integration_testジョブを作成必要あり)</li>
+<li></li>
+</ul>
+
 
 <h2>参考</h2>
 
-<p><a href="http://www.d-wood.com/blog/2013/09/25_4699.html">[Ruby on Rails] Ubuntu に rbenv + Bundler で Rails 4 をインストールする</a>
-<a href="http://www.buildinsider.net/enterprise/jenkins/02">Jenkinsで小さなテストを実行してみよう（Mac OS X＆Linux）</a></p>
+<p><a href="http://www.d-wood.com/blog/2013/09/25_4699.html">[Ruby on Rails] Ubuntu に rbenv + Bundler で Rails 4 をインストールする</a></p>
+
+<p><a href="http://www.buildinsider.net/enterprise/jenkins/02">Jenkinsで小さなテストを実行してみよう（Mac OS X＆Linux）</a></p>
+
+<p><a href="http://www.buildinsider.net/enterprise/jenkins/03">アプリケーションをデプロイしてみよう（Mac OS X＆Linux）</a></p>
 ]]></content>
   </entry>
   
