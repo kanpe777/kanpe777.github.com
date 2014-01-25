@@ -4,7 +4,7 @@
   <title><![CDATA[Category: rbenv | kanlog]]></title>
   <link href="http://kanpe777.github.io/blog/categories/rbenv/atom.xml" rel="self"/>
   <link href="http://kanpe777.github.io/"/>
-  <updated>2014-01-25T15:18:20+09:00</updated>
+  <updated>2014-01-25T15:23:14+09:00</updated>
   <id>http://kanpe777.github.io/</id>
   <author>
     <name><![CDATA[kanpe777]]></name>
@@ -49,7 +49,12 @@ export PATH=&ldquo;$RBENV_ROOT/bin:$PATH&rdquo;
 eval &ldquo;$(rbenv init &ndash;)&rdquo;</p>
 
 <p>$ sudo source /etc/profile.d/rbenv.sh
-$ rbenv 〇〇
+$ rbenv install &mdash;list
+$ rbenv install 〇〇
+$ rbenv rehash
+$ rbenv versions
+$ rbenv global 〇〇
+$ ruby -v
 ```</p>
 
 <h2>参考</h2>

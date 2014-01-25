@@ -4,7 +4,7 @@
   <title><![CDATA[kanlog]]></title>
   <link href="http://kanpe777.github.io/atom.xml" rel="self"/>
   <link href="http://kanpe777.github.io/"/>
-  <updated>2014-01-25T15:18:20+09:00</updated>
+  <updated>2014-01-25T15:23:14+09:00</updated>
   <id>http://kanpe777.github.io/</id>
   <author>
     <name><![CDATA[kanpe777]]></name>
@@ -49,6 +49,11 @@
 <span class='line-number'>17</span>
 <span class='line-number'>18</span>
 <span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>$ sudo yum install --enablerepo=epel -y make gcc zlib-devel openssl-devel readline-devel ncurses-devel gdbm-devel db4-devel libffi-devel tk-devel libyaml-devel
 </span><span class='line'>$ cd /usr/local/
 </span><span class='line'>$ sudo git clone git://github.com/sstephenson/rbenv.git rbenv
@@ -67,7 +72,12 @@
 </span><span class='line'>eval "$(rbenv init -)"
 </span><span class='line'>
 </span><span class='line'>$ sudo source /etc/profile.d/rbenv.sh
-</span><span class='line'>$ rbenv 〇〇</span></code></pre></td></tr></table></div></figure>
+</span><span class='line'>$ rbenv install --list
+</span><span class='line'>$ rbenv install 〇〇
+</span><span class='line'>$ rbenv rehash
+</span><span class='line'>$ rbenv versions
+</span><span class='line'>$ rbenv global 〇〇
+</span><span class='line'>$ ruby -v</span></code></pre></td></tr></table></div></figure>
 
 
 <h2>参考</h2>
