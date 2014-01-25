@@ -6,10 +6,7 @@
 	<title>kanlog</title>
     <meta name="author" content="kanpe777">
     
-	<meta name="description" content="Published on: Jan 23rd, 2014 Tags: CUDA, GPGPU 1. CUDAとは 統合開発環境
-GPUコンピューティング向け
-NVIDIAのGeForceシリーズのGPUが搭載されている必要あり 2. キーワード 2.1 スレッド(Thread) 実行単位
-基本、 &hellip;">
+	<meta name="description" content="Published on: Jan 25th, 2014 Tags: CentOS6, rbenv あとあとJenkinsのrbenv等でOS側がインストールしているRubyを使わせたいのでroot側でやっておく(Jenkinsのrbenvプラグインでは1.9.3までしかなかった 2014/01 &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -94,6 +91,104 @@ NVIDIAのGeForceシリーズのGPUが搭載されている必要あり 2. キー
 <!-- begin toload --> 
     <div id="content" class="inner">
         
+
+
+    <article class="post">
+	<h2 class="title">
+		
+		<a href="/blog/2014/01/25/install-rbenv-on-centos6-dot-4/">
+		
+			CentOS6.4 に システムワイドなrbenvでrubyをインストール</a>
+	</h2>
+    <div class="entry-content">
+    <div class="meta">
+      <div class="date">Published on: 
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-01-25T14:50:00+09:00" pubdate data-updated="true">Jan 25<span>th</span>, 2014</time></div>
+      <div class="tags">Tags: 
+
+
+	<a class='category' href='/blog/categories/centos6/'>CentOS6</a>, <a class='category' href='/blog/categories/rbenv/'>rbenv</a>
+
+
+</div>
+    </div>
+		<p>あとあとJenkinsのrbenv等でOS側がインストールしているRubyを使わせたいのでroot側でやっておく(Jenkinsのrbenvプラグインでは1.9.3までしかなかった 2014/01/25)</p>
+
+<h2>まとめ</h2>
+
+<ul>
+<li>yumで依存パッケージをインストール</li>
+<li>rbenv撮ってきて、グループ設定</li>
+<li>rbenvにruby-buildをpluginとして入れる</li>
+<li>rubyをインストール</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ sudo yum install --enablerepo=epel -y make gcc zlib-devel openssl-devel readline-devel ncurses-devel gdbm-devel db4-devel libffi-devel tk-devel libyaml-devel
+</span><span class='line'>$ cd /usr/local/
+</span><span class='line'>$ sudo git clone git://github.com/sstephenson/rbenv.git rbenv
+</span><span class='line'>$ sudo groupadd rbenv
+</span><span class='line'>$ sudo chgrp -R rbenv rbenv
+</span><span class='line'>$ sudo chmod -R g+rwxXs rbenv
+</span><span class='line'>$ mkdir rbenv/plugins
+</span><span class='line'>$ cd rbenv/plugins
+</span><span class='line'>$ sudo git clone git://github.com/sstephenson/ruby-build.git
+</span><span class='line'>$ sudo chgrp -R rbenv ruby-build/
+</span><span class='line'>$ sudo chmod -R g+rwxs ruby-build/
+</span><span class='line'>$ sudo vim /etc/profile.d/rbenv.sh
+</span><span class='line'>
+</span><span class='line'>export RBENV_ROOT="/usr/local/rbenv"
+</span><span class='line'>export PATH="$RBENV_ROOT/bin:$PATH"
+</span><span class='line'>eval "$(rbenv init -)"
+</span><span class='line'>
+</span><span class='line'>$ sudo source /etc/profile.d/rbenv.sh
+</span><span class='line'>$ rbenv 〇〇</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>参考</h2>
+
+<p><a href="http://nomnel.net/blog/centos-system-wide-rbenv-and-ruby-build/">CentOSでsystem wideなrbenv+ruby-build環境を構築する</a></p>
+
+<p><a href="http://easyramble.com/install-ruby-with-rbenv.html">rbenv と ruby-build で Ruby をインストールして管理 〜 CentOS6</a></p>
+
+		
+		
+	</div>
+
+<div class="meta">
+	
+</div>
+</article>
 
 
     <article class="post">
@@ -1452,127 +1547,6 @@ NVIDIAのGeForceシリーズのGPUが搭載されている必要あり 2. キー
 <ul>
 <li><a href="http://morizyun.github.io/blog/postgresql-mac-centos-rails/">Mac MountainLion/CentOS6.4へのPostgreSQL9.2の導入手順</a></li>
 <li><a href="http://morizyun.github.io/blog/heroku-rails4-postgresql-introduction/">Rails4でheroku Pushまでの最短手順 (Haml/bootstrap 3.0/postgresql or MySQL)</a></li>
-</ul>
-
-
-		
-		
-	</div>
-
-<div class="meta">
-	
-</div>
-</article>
-
-
-    <article class="post">
-	<h2 class="title">
-		
-		<a href="/blog/2014/01/13/install-rbenv-on-centos-6-dot-5/">
-		
-			CentOS 6.5 にrbenvでrubyをインストールするまで</a>
-	</h2>
-    <div class="entry-content">
-    <div class="meta">
-      <div class="date">Published on: 
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-01-13T17:54:00+09:00" pubdate data-updated="true">Jan 13<span>th</span>, 2014</time></div>
-      <div class="tags">Tags: 
-
-
-	<a class='category' href='/blog/categories/centos/'>CentOS</a>, <a class='category' href='/blog/categories/rbenv/'>rbenv</a>
-
-
-</div>
-    </div>
-		<h3>やったこと</h3>
-
-<ol>
-<li>rbenvのインストール</li>
-<li>ruby-buildのインストール</li>
-<li>rbenvでrubyのインストール</li>
-</ol>
-
-
-<h3>1. rbenv</h3>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ git clone git://github.com/sstephenson/rbenv.git ~/.rbenv
-</span><span class='line'>$ echo 'export PATH="$HOME/.rbenv/bin:$PATH"' &gt;&gt; ~/.zshrc
-</span><span class='line'>$ echo 'eval "$(rbenv init -)"' &gt;&gt; ~/.zshrc </span></code></pre></td></tr></table></div></figure>
-
-
-<h3>2. ruby-build</h3>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ git clone git://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
-</span><span class='line'>$ cd ~/.rbenv/plugins/ruby-build
-</span><span class='line'>$ sudo ./install.sh</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>3. ruby 2.1のインストール</h3>
-
-<ul>
-<li>依存系ファイルのインストール</li>
-<li>install</li>
-</ul>
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ yum install --enablerepo=epel make gcc zlib-devel openssl-devel readline-devel ncurses-devel gdbm-devel db4-devel libffi-devel tk-devel libyaml-devel
-</span><span class='line'>$ rbenv install 2.1.0
-</span><span class='line'>$ rbenv rehash
-</span><span class='line'>$ rbenv global 2.1.0
-</span><span class='line'>$ ruby -v で確認</span></code></pre></td></tr></table></div></figure>
-
-
-<h4>おまけ: rbenvでインストール可能なやつ一覧</h4>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'> $ rbenv install -l
-</span><span class='line'>...
-</span><span class='line'>  2.0.0-rc2
-</span><span class='line'>  2.1.0
-</span><span class='line'>  2.1.0-dev
-</span><span class='line'>  2.1.0-preview1
-</span><span class='line'>  2.1.0-preview2
-</span><span class='line'>  2.1.0-rc1
-</span><span class='line'>  2.2.0-dev
-</span><span class='line'>...</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>参考</h3>
-
-<ul>
-<li><a href="http://qiita.com/IK12_info/items/641fbdc4082e9f56f1c5">CentOS ruby-build, rbenvのインストール方法(Qiita)</a></li>
-<li><a href="http://nomnel.net/blog/centos-system-wide-rbenv-and-ruby-build/">CentOSでsystem wideなrbenv+ruby-build環境を構築する</a></li>
 </ul>
 
 

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: rbenv | kanlog]]></title>
   <link href="http://kanpe777.github.io/blog/categories/rbenv/atom.xml" rel="self"/>
   <link href="http://kanpe777.github.io/"/>
-  <updated>2014-01-25T12:42:39+09:00</updated>
+  <updated>2014-01-25T15:18:20+09:00</updated>
   <id>http://kanpe777.github.io/</id>
   <author>
     <name><![CDATA[kanpe777]]></name>
@@ -12,6 +12,53 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[CentOS6.4 に システムワイドなrbenvでrubyをインストール]]></title>
+    <link href="http://kanpe777.github.io/blog/2014/01/25/install-rbenv-on-centos6-dot-4/"/>
+    <updated>2014-01-25T14:50:00+09:00</updated>
+    <id>http://kanpe777.github.io/blog/2014/01/25/install-rbenv-on-centos6-dot-4</id>
+    <content type="html"><![CDATA[<p>あとあとJenkinsのrbenv等でOS側がインストールしているRubyを使わせたいのでroot側でやっておく(Jenkinsのrbenvプラグインでは1.9.3までしかなかった 2014/01/25)</p>
+
+<h2>まとめ</h2>
+
+<ul>
+<li>yumで依存パッケージをインストール</li>
+<li>rbenv撮ってきて、グループ設定</li>
+<li>rbenvにruby-buildをpluginとして入れる</li>
+<li>rubyをインストール</li>
+</ul>
+
+
+<p>```
+$ sudo yum install &mdash;enablerepo=epel -y make gcc zlib-devel openssl-devel readline-devel ncurses-devel gdbm-devel db4-devel libffi-devel tk-devel libyaml-devel
+$ cd /usr/local/
+$ sudo git clone git://github.com/sstephenson/rbenv.git rbenv
+$ sudo groupadd rbenv
+$ sudo chgrp -R rbenv rbenv
+$ sudo chmod -R g+rwxXs rbenv
+$ mkdir rbenv/plugins
+$ cd rbenv/plugins
+$ sudo git clone git://github.com/sstephenson/ruby-build.git
+$ sudo chgrp -R rbenv ruby-build/
+$ sudo chmod -R g+rwxs ruby-build/
+$ sudo vim /etc/profile.d/rbenv.sh</p>
+
+<p>export RBENV_ROOT=&ldquo;/usr/local/rbenv&rdquo;
+export PATH=&ldquo;$RBENV_ROOT/bin:$PATH&rdquo;
+eval &ldquo;$(rbenv init &ndash;)&rdquo;</p>
+
+<p>$ sudo source /etc/profile.d/rbenv.sh
+$ rbenv 〇〇
+```</p>
+
+<h2>参考</h2>
+
+<p><a href="http://nomnel.net/blog/centos-system-wide-rbenv-and-ruby-build/">CentOSでsystem wideなrbenv+ruby-build環境を構築する</a></p>
+
+<p><a href="http://easyramble.com/install-ruby-with-rbenv.html">rbenv と ruby-build で Ruby をインストールして管理 〜 CentOS6</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[UbuntuにてRoRのインストールからJenkinsの利用まで]]></title>
