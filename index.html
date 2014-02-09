@@ -6,7 +6,7 @@
 	<title>kanlog</title>
     <meta name="author" content="kanpe777">
     
-	<meta name="description" content="Published on: Jan 25th, 2014 Tags: CentOS6, rbenv あとあとJenkinsのrbenv等でOS側がインストールしているRubyを使わせたいのでroot側でやっておく(Jenkinsのrbenvプラグインでは1.9.3までしかなかった 2014/01 &hellip;">
+	<meta name="description" content=" Published on: Feb 2nd, 2014 Tags: ">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -91,6 +91,1220 @@
 <!-- begin toload --> 
     <div id="content" class="inner">
         
+
+
+    <article class="post">
+	<h2 class="title">
+		
+		<a href="/blog/2014/02/02/install-postgresql-in-centos-6-dot-5/">
+		
+			Install PostgreSQL in CentOS 6.5</a>
+	</h2>
+    <div class="entry-content">
+    <div class="meta">
+      <div class="date">Published on: 
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-02-02T18:24:00+09:00" pubdate data-updated="true">Feb 2<span>nd</span>, 2014</time></div>
+      <div class="tags">Tags: 
+
+</div>
+    </div>
+		
+
+		
+		
+	</div>
+
+<div class="meta">
+	
+</div>
+</article>
+
+
+    <article class="post">
+	<h2 class="title">
+		
+		<a href="/blog/2014/01/31/play-ror-and-jenkins-on-centos/">
+		
+			PostgreSQLを使ったRoRをGitHubからJenkinsを通してHerokuまで</a>
+	</h2>
+    <div class="entry-content">
+    <div class="meta">
+      <div class="date">Published on: 
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-01-31T14:56:00+09:00" pubdate data-updated="true">Jan 31<span>st</span>, 2014</time></div>
+      <div class="tags">Tags: 
+
+
+	<a class='category' href='/blog/categories/ror/'>RoR</a>, <a class='category' href='/blog/categories/centos/'>centos</a>, <a class='category' href='/blog/categories/rspec/'>rspec</a>
+
+
+</div>
+    </div>
+		<p><a href="http://kanpe777.github.io/blog/2014/01/22/first-using-ror-and-jenkins/">参考をそのまま試した備忘ログ</a> のCentOS and PostgreSQLを使用版</p>
+
+<p>JenkinsもVPS上にやってるので最終的にはHerokuへの自動デプロイまでやったことの流れ
+(ついでに勉強したことのノート)</p>
+
+<h2>環境</h2>
+
+<ul>
+<li>CentOS 6.5</li>
+<li>ruby 2.0.0dev</li>
+<li>rails 4.0.2</li>
+<li>postgreSQL 9.3</li>
+</ul>
+
+
+<p>以上の環境が既に整ってることが前提</p>
+
+<h2>1. アプリの作成</h2>
+
+<h3>1.1 rails new</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ rails new my_circle --database=postgresql --skip-test-unit --skip-bundle</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Note : <code>--database=postgresql</code> == <code>-d postgresql</code></h4>
+
+<blockquote><p>&mdash;database=postgresqlオプションを入れた時と入れない時の違いは結構あるので注意</p>
+
+<p><a href="http://qa.atmarkit.co.jp/q/2970">rails new project -d postgresql を指定した時に変更される部位</a></p></blockquote>
+
+<h4>Note : <code>--skip-test-unit</code> == <code>-T</code></h4>
+
+<blockquote><p>標準だとTest::Unitというテスティングフレームワークが使用される(RSpecを使用したい)</p></blockquote>
+
+<h4>Note : <code>--skip-bundle</code></h4>
+
+<blockquote><p><code>bundle install</code>を行わない</p>
+
+<p>どうせあとでちょっといじってまたbundle installする</p></blockquote>
+
+<h4>そのままだと &lsquo;autodetect&rsquo;: Could not find a JavaScript runtime. See <a href="https://github.com/sstephenson/execjs">https://github.com/sstephenson/execjs</a> for a list of available runtimes. (ExecJS::RuntimeUnavailable) と出る</h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ vim Gemfile
+</span><span class='line'>
+</span><span class='line'>Before
+</span><span class='line'>#gem 'therubyracer', :platforms =&gt; :ruby
+</span><span class='line'>
+</span><span class='line'>After
+</span><span class='line'>gem 'therubyracer', :platforms =&gt; :ruby
+</span><span class='line'>
+</span><span class='line'>$ bundle install</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>1.1 postgresの方でuserとDBの作成</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ createuser my_circle -s
+</span><span class='line'>$ createdb my_circle_development -O my_circle</span></code></pre></td></tr></table></div></figure>
+
+
+<h4><code>createuser</code> の -s/-Sオプション</h4>
+
+<blockquote><p>スーパーユーザとして追加される</p></blockquote>
+
+<h4><code>createdb</code> の -Oオプション</h4>
+
+<blockquote><p>新しいDBの所有者となるDBUserを指定</p></blockquote>
+
+<h3>1.2 userメンテ画面をscaffold機能を使用して作成</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ rails g scaffold user name:string age:integer</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>1.3 DBの作成 &amp; テスト用DBの作成</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ rake db:migrate
+</span><span class='line'>$ rake db:test:clone</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>1.4 確認</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ rails s</span></code></pre></td></tr></table></div></figure>
+
+
+<p><a href="localhost:3000/users">localhost:3000/users</a></p>
+
+<ul>
+<li>rails s -pXXXX でポート番号を指定可能</li>
+</ul>
+
+
+<h2>2. RSpecのセットアップ</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ vim Gemfile
+</span><span class='line'>
+</span><span class='line'># 以下を追記
+</span><span class='line'>group :development, :test do
+</span><span class='line'>  gem 'rspec-rails', '~&gt; 2.0'
+</span><span class='line'>end
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ bundle install
+</span><span class='line'>$ rails generate rspec:install</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>rails generate rspec:install</h4>
+
+<blockquote><p>RSpecをセットアップするためのコマンド</p>
+
+<p>これで、プロジェクトディレクトリの下にspecディレクトリができたのが確認可能(他には.spec等)</p></blockquote>
+
+<h3>2.1 RSpecの出力フォーマットをドキュメント形式に変更</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ vim .rspec
+</span><span class='line'>
+</span><span class='line'>Before
+</span><span class='line'>--color
+</span><span class='line'>
+</span><span class='line'>After
+</span><span class='line'>--color --format documentation</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>3. アプリケーションの修正とユニットテストの作成</h2>
+
+<h3>3.1 Userモデルに対してバリデーションの追加</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ vim app/models/user.rb
+</span><span class='line'>
+</span><span class='line'># 必須入力 && 最大文字数が20
+</span><span class='line'>  validates :name,
+</span><span class='line'>    :presence =&gt; true,
+</span><span class='line'>    :length =&gt; {:maximum =&gt; 20}
+</span><span class='line'># 必須入力 && 入力値が0 - 1000の間
+</span><span class='line'>  validates :age,
+</span><span class='line'>    :presence =&gt; true,
+</span><span class='line'>    :numericality =&gt; {:greater_than_or_equal_to =&gt; 0,
+</span><span class='line'>    :less_than_or_equal_to =&gt; 1000}</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>3.2 バリデーションをテストするコード</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ mkdir spec/models
+</span><span class='line'>$ vim spec/models/user_spec.rb
+</span><span class='line'>
+</span><span class='line'># -*- coding: utf-8 -*-
+</span><span class='line'>require 'spec_helper'
+</span><span class='line'>
+</span><span class='line'>describe User do
+</span><span class='line'>  context '何も入力しなかった場合' do
+</span><span class='line'>    subject{User.new}
+</span><span class='line'>    it { should_not be_valid }
+</span><span class='line'>    it { should have(1).errors_on(:name) }
+</span><span class='line'>    it { should have(2).errors_on(:age) }
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  context '名前が文字数をオーバーしている場合' do
+</span><span class='line'>    subject{User.new(name: 'aaaaaaaaaabbbbbbbbbbc',age: 10)}
+</span><span class='line'>    it { should_not be_valid }
+</span><span class='line'>    it { should have(1).errors_on(:name) }
+</span><span class='line'>    it { should have(0).errors_on(:age) }
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  context '年齢が範囲を超えている場合' do
+</span><span class='line'>    subject{User.new(name: 'taro',age: 1001)}
+</span><span class='line'>    it {should_not be_valid}
+</span><span class='line'>    it{ should have(0).errors_on(:name) }
+</span><span class='line'>    it{ should have(1).errors_on(:age) }
+</span><span class='line'>  end
+</span><span class='line'>
+</span><span class='line'>  context '正常なデータがセットされた場合' do
+</span><span class='line'>    subject{User.new(name: 'taro',age: 20)}
+</span><span class='line'>    it {should be_valid}
+</span><span class='line'>  end
+</span><span class='line'>end
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>ブラウザでも確認可能</h4>
+
+<ul>
+<li>何も入力しないでuserを追加しようとすると怒られる</li>
+</ul>
+
+
+<h3>3.3 テストの実行</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ bundle exec rspec
+</span><span class='line'>(以下のような結果がでるはず)
+</span><span class='line'>
+</span><span class='line'>User
+</span><span class='line'>  正常なデータがセットされた場合
+</span><span class='line'>    should be valid
+</span><span class='line'>  名前が文字数をオーバーしている場合
+</span><span class='line'>[deprecated] I18n.enforce_available_locales will default to true in the future. If you really want to skip validation of your locale you can set I18n.enforce_available_locales = false to avoid this message.
+</span><span class='line'>    should not be valid
+</span><span class='line'>    should have 1 errors on :name
+</span><span class='line'>    should have 0 errors on :age
+</span><span class='line'>  年齢が範囲を超えている場合
+</span><span class='line'>    should not be valid
+</span><span class='line'>    should have 0 errors on :name
+</span><span class='line'>    should have 1 errors on :age
+</span><span class='line'>  何も入力しなかった場合
+</span><span class='line'>    should not be valid
+</span><span class='line'>    should have 1 errors on :name
+</span><span class='line'>    should have 2 errors on :age
+</span><span class='line'>
+</span><span class='line'>Finished in 0.1475 seconds
+</span><span class='line'>10 examples, 0 failures
+</span><span class='line'>
+</span><span class='line'>Randomized with seed 15644
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>4. インテグレーションテストの作成</h2>
+
+<h3>4.1 GemfileにRSpecをGherkin(ガーキン)記法で書けるようなgemを記述(turnip)</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ vim Gefile
+</span><span class='line'>
+</span><span class='line'>...
+</span><span class='line'>group :development, :test do
+</span><span class='line'>  gem 'rspec-rails', '~&gt; 2.0'
+</span><span class='line'>  gem 'capybara'
+</span><span class='line'>  gem 'turnip'
+</span><span class='line'>end
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>capybara</h4>
+
+<blockquote><p>仮想的なwebブラウザでテストを行うために必要</p></blockquote>
+
+<h4>turnip</h4>
+
+<blockquote><p>gherkin記法でRSpecを書くことが可能なフレームワーク</p></blockquote>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ bundle install
+</span><span class='line'>$ vim .rspec
+</span><span class='line'>
+</span><span class='line'>Before
+</span><span class='line'>--color --format documentation
+</span><span class='line'>
+</span><span class='line'>After
+</span><span class='line'>-r turnip/rspec --color --format documentation
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>4.2 Turnipを実行できるようにする</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ vim spec/spec_helper.rb
+</span><span class='line'>
+</span><span class='line'>...
+</span><span class='line'>require 'rspec/autorun'#(この行の下辺りに)
+</span><span class='line'>
+</span><span class='line'>#記述
+</span><span class='line'>Dir.glob("spec/**/*steps.rb") { |f| load f, true}
+</span><span class='line'>
+</span><span class='line'>require 'capybara/dsl'
+</span><span class='line'>require 'capybara/rspec'
+</span><span class='line'>require 'turnip'
+</span><span class='line'>require 'turnip/capybara'
+</span><span class='line'>
+</span><span class='line'>...
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>4.3 featureファイルとstepファイルの記述</h3>
+
+<p>users.feature</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ mkdir spec/feature
+</span><span class='line'>$ vim spec/feature/users.feature
+</span><span class='line'>
+</span><span class='line'># encoding: utf-8
+</span><span class='line'># language: ja
+</span><span class='line'>機能: ユーザー管理
+</span><span class='line'>  ユーザー管理を行いたい。なぜならサークル活動に参加するメンバーを管理する必要があるからだ。
+</span><span class='line'>
+</span><span class='line'>  シナリオ: 一覧画面から新規登録画面に移動する
+</span><span class='line'>    前提 ユーザー管理の一覧画面を開く
+</span><span class='line'>    もし "New User" リンクをクリックする
+</span><span class='line'>    ならば ユーザー管理の新規登録画面が表示される
+</span><span class='line'>
+</span><span class='line'>  シナリオ: 登録画面で登録すると詳細画面に移動する
+</span><span class='line'>    前提 ユーザー管理の新規登録画面を開く
+</span><span class='line'>    もし "Name" に "アリス" と入力する
+</span><span class='line'>    かつ "Age" に "16" と入力する
+</span><span class='line'>    かつ "Create User" ボタンをクリックする
+</span><span class='line'>    ならば ユーザー管理の詳細画面が表示される</span></code></pre></td></tr></table></div></figure>
+
+
+<p>users_steps.rb</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ mkdir spec/steps/
+</span><span class='line'>$ vim spec/steps/users_steps.rb
+</span><span class='line'>
+</span><span class='line'># encoding: utf-8
+</span><span class='line'>
+</span><span class='line'>step 'ユーザー管理の一覧画面を開く' do
+</span><span class='line'>  visit '/users'
+</span><span class='line'>end
+</span><span class='line'>
+</span><span class='line'>step '画面を目視' do
+</span><span class='line'>  save_and_open_page
+</span><span class='line'>end
+</span><span class='line'>
+</span><span class='line'>step ':name リンクをクリックする' do |name|
+</span><span class='line'>  first(:link, name).click
+</span><span class='line'>end
+</span><span class='line'>
+</span><span class='line'>step ':name ボタンをクリックする' do |name|
+</span><span class='line'>  first(:button, name).click
+</span><span class='line'>end
+</span><span class='line'>
+</span><span class='line'>step 'ユーザー管理の新規登録画面が表示される' do
+</span><span class='line'>  current_path = URI.parse(current_url).path
+</span><span class='line'>  current_path.should == '/users/new'
+</span><span class='line'>end
+</span><span class='line'>
+</span><span class='line'>step 'ユーザー管理の詳細画面が表示される' do
+</span><span class='line'>  current_path = URI.parse(current_url).path
+</span><span class='line'>  current_path.should == '/users/1'
+</span><span class='line'>end
+</span><span class='line'>
+</span><span class='line'>step 'ユーザー管理の新規登録画面を開く' do
+</span><span class='line'>  visit '/users/new'
+</span><span class='line'>end
+</span><span class='line'>
+</span><span class='line'>step ':field に :value と入力する' do |field, value|
+</span><span class='line'>  fill_in(field, :with =&gt; value)
+</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>4.4 テストの実行</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ bundle exec rspec
+</span><span class='line'>成功するはず</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>注意</h4>
+
+<blockquote><p><code>$ rake db:test:clone</code>をしないと失敗する可能性がある</p>
+
+<p>複数回連続では出来ない。多分DBに要素が残りっぱなし</p></blockquote>
+
+<h2>5. Jenkinsでnew Jobを作成</h2>
+
+<p>ここらへんは、前回の記事と一緒</p>
+
+<h3><a href="http://kanpe777.github.io/blog/2014/01/22/first-using-ror-and-jenkins/">参考をそのまま試した備忘ログ</a></h3>
+
+<h3>ネットワーク設定あたりの注意点</h3>
+
+<p>localではつながるが、vps上では色々やらないといけなかった
+nginxで動かすので <code>yum install nginx</code>等やって</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ vim /etc/nginx/nginx.com
+</span><span class='line'>
+</span><span class='line'>##-- (ry
+</span><span class='line'>
+</span><span class='line'>http {
+</span><span class='line'>  ##-- (ry
+</span><span class='line'>
+</span><span class='line'>      listen 80;
+</span><span class='line'>    server_name &lt;ホスト名&gt;; 
+</span><span class='line'>    location {
+</span><span class='line'>      proxy_pass http://localhost:80; 
+</span><span class='line'>    }  
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<blockquote><p>ssh hoge@&lt;ホスト名></p></blockquote>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ sudo service nginx restart</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li><a href="http://%E3%83%9B%E3%82%B9%E3%83%88%E5%90%8D/jenkins">http://%E3%83%9B%E3%82%B9%E3%83%88%E5%90%8D/jenkins</a> でアクセス可能</li>
+</ul>
+
+
+<h2>6. いざ実行しようとしたら、PostgreSQLの認証で怒られた</h2>
+
+<p>こんな感じ怒られる</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>FATAL: Peer authentication failed for user "postgres"</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>6.1 解決方法</h3>
+
+<ul>
+<li>pg_hba.confをいじる</li>
+</ul>
+
+
+<p>PostgreSQL 9.3 でやってるので自分の環境では</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$sudo vim /var/lib/pgsql/9.3/data/pg_hba.conf
+</span><span class='line'>
+</span><span class='line'>## 変更前
+</span><span class='line'># "local" is for Unix domain socket connections only
+</span><span class='line'>local   all             all                                     peer
+</span><span class='line'>
+</span><span class='line'>## 変更後
+</span><span class='line'># "local" is for Unix domain socket connections only
+</span><span class='line'>local   all             all                                     trust</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ sudo service postgresql-9.3 restart</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>md5では失敗したorz</li>
+</ul>
+
+
+<h2>7. Jenkinsでのjob中にてrspecでsyntaxエラー</h2>
+
+<p>3つのテストに分ける段階での、integration_testの方で</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>bundle install --path vendor/bundle
+</span><span class='line'>bundle exec rake db:migrate
+</span><span class='line'>bundle exec rake db:test:clone
+</span><span class='line'>bundle exec rspec spec/*/*.feature</span></code></pre></td></tr></table></div></figure>
+
+
+<p>ここで以下の様なエラー</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ bundle exec rspec spec/*/*.feature          
+</span><span class='line'>syntax error, unexpected ':', expecting end-of-input (SyntaxError)
+</span><span class='line'>機能: ユーザー管理
+</span><span class='line'>        ^</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>7.1 GitHub上に.rpsecファイルがないのが問題</h3>
+
+<p>ローカルなリポジトリにて</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ vim .gitignore
+</span><span class='line'>.rspecを消す
+</span><span class='line'>
+</span><span class='line'>$ git stage .gitignore
+</span><span class='line'>$ git commit -m "Fix .gitignore"
+</span><span class='line'>$ git push</span></code></pre></td></tr></table></div></figure>
+
+
+<p>.rpsecの中身</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>-r turnip/rspec --color --format documentation</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>8 Herokuへpushしようとすると激おこ</h2>
+
+<h4>原因:Jenkinsが頭よくて、masterを汚さないよう一時branchでやってる</h4>
+
+<h3>8.1 解決方法</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>git checkout -b temp
+</span><span class='line'>git push heroku temp:master
+</span><span class='line'>git checkout master
+</span><span class='line'>git branch -D temp</span></code></pre></td></tr></table></div></figure>
+
+
+<p>という風にやる</p>
+
+<p>やっと全部できた</p>
+
+<h2>参考</h2>
+
+<ul>
+<li><a href="http://railsdoc.com/rails">Railsドキュメント</a></li>
+<li><a href="http://rice-american.github.io/blog/2014/01/27/nginx-jenkins/">さくらVPSにJenkinsとNginxでJenkinsサーバを構築</a></li>
+<li><a href="http://www.postgresql.jp/document/9.3/html/auth-pg-hba-conf.html">PostgreSQL 9.3.2文書 第19章 クライアント認証</a></li>
+<li><a href="http://stackoverflow.com/questions/18664074/getting-error-peer-authentication-failed-for-user-postgres-when-trying-to-ge">Getting error: Peer authentication failed for user &ldquo;postgres”, when trying to get pgsql working with rails</a></li>
+<li><a href="http://rice-american.github.io/blog/2014/02/08/jenkins-rspec/">Bundle Exec Rspec spec/<em>/</em>.featureが失敗する件</a></li>
+<li><a href="http://junjiblg.hatenablog.jp/entry/2013/12/06/230803">【Jenkins】JenkinsでHerokuにデプロイすると「Everything up-to-date」と表示される</a></li>
+</ul>
+
+
+		
+		
+	</div>
+
+<div class="meta">
+	
+</div>
+</article>
+
+
+    <article class="post">
+	<h2 class="title">
+		
+		<a href="/blog/2014/01/26/http-note-1/">
+		
+			HTTP ノート その1</a>
+	</h2>
+    <div class="entry-content">
+    <div class="meta">
+      <div class="date">Published on: 
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-01-26T17:30:00+09:00" pubdate data-updated="true">Jan 26<span>th</span>, 2014</time></div>
+      <div class="tags">Tags: 
+
+
+	<a class='category' href='/blog/categories/http/'>http</a>, <a class='category' href='/blog/categories/studynote/'>studynote</a>
+
+
+</div>
+    </div>
+		<p>Fiddlerで色々</p>
+
+<h2>リクエスト・メッセージ</h2>
+
+<h3>1行目 : リクエストライン</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>GET /hoge/fuga.php HTTP/1.1</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>GET</h4>
+
+<ul>
+<li>メソッド</li>
+</ul>
+
+
+<h4>/hoge/fuga.php</h4>
+
+<ul>
+<li>リクエストURL</li>
+</ul>
+
+
+<h4>HTTP/1.1</h4>
+
+<ul>
+<li>プロトコルバージョン</li>
+</ul>
+
+
+<h3>2行目~ : ヘッダ</h3>
+
+<p>リクエストラインの次の行からは<code>ヘッダ</code>(1行毎にヘッダと呼ぶ?)
+ * Accept
+ * Referer
+ * Accept-Language
+ * HOST
+ * &hellip;</p>
+
+<p>色々</p>
+
+<h2>レスポンス・メッセージ</h2>
+
+<h3>ステータスライン</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>HTTP/1.1 200 OK</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>HTTP/1.1</h4>
+
+<ul>
+<li>プロトコルバージョン</li>
+</ul>
+
+
+<h4>200</h4>
+
+<ul>
+<li>ステータスコード</li>
+</ul>
+
+
+<table>
+<thead>
+<tr>
+<th></th>
+<th align="left">ステータスコード</th>
+<th align="left">概要</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td align="left">1xx</td>
+<td align="left">処理が継続中</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">2xx</td>
+<td align="left">正常終了</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">3xx</td>
+<td align="left">リダイレクト</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">4xx</td>
+<td align="left">クライアントエラー</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">5xx</td>
+<td align="left">サーバーエラー</td>
+</tr>
+</tbody>
+</table>
+
+
+<h4>OK</h4>
+
+<ul>
+<li>テキストフレーズ</li>
+</ul>
+
+
+<h3>ヘッダ(レスポンスヘッダ)</h3>
+
+<h4>Content-Length</h4>
+
+<ul>
+<li>ボディのバイト数</li>
+</ul>
+
+
+<h4>Content-Type</h4>
+
+<ul>
+<li>MIMEタイプというリソースの種類の指定</li>
+</ul>
+
+
+<table>
+<thead>
+<tr>
+<th></th>
+<th align="left">MIMEタイプ</th>
+<th align="left">意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td align="left">text/plain</td>
+<td align="left">テキスト</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">text/html</td>
+<td align="left">HTML文書</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">application/xml</td>
+<td align="left">XML文書</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">text/css</td>
+<td align="left">CSS</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">image/gif</td>
+<td align="left">GIF</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">image/jepg</td>
+<td align="left">JPEG</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">image/gif</td>
+<td align="left">PNG</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">application/pdf</td>
+<td align="left">PDF</td>
+</tr>
+</tbody>
+</table>
+
+
+<p><code>charset=UTF-8</code>はHTTPレスポンスに対する文字エンコーディング</p>
+
+<h3>POSTメソッド</h3>
+
+<ul>
+<li>GETメソッドと異なりメッセージボディをもつ</li>
+</ul>
+
+
+<h4>メッセージボディ</h4>
+
+<ul>
+<li>POSTメソッドのリクエストのボディに送信される値がある</li>
+<li>送信される値に関するヘッダがContent-Length, Content-Type</li>
+<li>Content-Length = ボディのバイト数</li>
+<li></li>
+</ul>
+
+
+		
+		
+	</div>
+
+<div class="meta">
+	
+</div>
+</article>
+
+
+    <article class="post">
+	<h2 class="title">
+		
+		<a href="/blog/2014/01/25/note-1-about-network/">
+		
+			ネットワークのお勉強の際のノート</a>
+	</h2>
+    <div class="entry-content">
+    <div class="meta">
+      <div class="date">Published on: 
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-01-25T17:20:00+09:00" pubdate data-updated="true">Jan 25<span>th</span>, 2014</time></div>
+      <div class="tags">Tags: 
+
+
+	<a class='category' href='/blog/categories/network/'>network</a>
+
+
+</div>
+    </div>
+		<p>ノート</p>
+
+<h2>プロキシ</h2>
+
+<ul>
+<li>DNSキャッシュサーバーのように通信を代理で行ってくれるサーバー</li>
+<li>通信を代理で行う</li>
+</ul>
+
+
+<p><img src="/images/myimages/proxy_0.png" alt="プロキシのイメージ" width="300" height="300"></p>
+
+<h3>プロキシのメリット</h3>
+
+<ul>
+<li>実際に通信するのはプロキシなので、PC側が安全</li>
+</ul>
+
+
+<h2>リバースプロキシ</h2>
+
+<ul>
+<li>プロキシはPC側がやるもの、リバースプロキシはWebサーバー側がやるもの</li>
+</ul>
+
+
+<h3>リバースプロキシのメリット</h3>
+
+<ul>
+<li>実際に通信するのはリーバスプロキシサーバーを通すようにするので、Webサーバ側の安全性があがる</li>
+</ul>
+
+
+<h2>参考</h2>
+
+<p><a href="http://beginners-network.com/proxy.html">ネットワーク入門サイト</a></p>
+
+		
+		
+	</div>
+
+<div class="meta">
+	
+</div>
+</article>
+
+
+    <article class="post">
+	<h2 class="title">
+		
+		<a href="/blog/2014/01/25/install-jenkins-on-centos6-dot-4/">
+		
+			Install Jenkins on CentOS6.4</a>
+	</h2>
+    <div class="entry-content">
+    <div class="meta">
+      <div class="date">Published on: 
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-01-25T15:25:00+09:00" pubdate data-updated="true">Jan 25<span>th</span>, 2014</time></div>
+      <div class="tags">Tags: 
+
+
+	<a class='category' href='/blog/categories/centos6/'>CentOS6</a>, <a class='category' href='/blog/categories/jenkins/'>Jenkins</a>
+
+
+</div>
+    </div>
+		<h2>環境</h2>
+
+<ul>
+<li>CentOS 6.4</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ sudo yum groupinstall "Development Tools"
+</span><span class='line'>$ sudo rpm -ivh http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm
+</span><span class='line'>$ sudo yum install -y nginx
+</span><span class='line'>$ sudo service nginx start
+</span><span class='line'>$ sudo chkconfig nginx on
+</span><span class='line'>$ sudo yum install -y wget
+</span><span class='line'>$ sudo yum install -y java-1.7.0-openjdk java-1.7.0-openjdk-devel
+</span><span class='line'>$ sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
+</span><span class='line'>$ sudo rpm --import http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
+</span><span class='line'>$ sudo vim /etc/sysconfig/jenkins 
+</span><span class='line'>
+</span><span class='line'>JENKINS_PORT="XXXXX"
+</span><span class='line'>JENKINS_ARGS="--prefix=/jenkins --httpPort=${JENKINS_PORT} --ajp13Port=${JENKINS_AJP_PORT}"
+</span><span class='line'>
+</span><span class='line'>$ sudo vim /etc/nginx/conf.d/jenkins.conf
+</span><span class='line'>
+</span><span class='line'>server {
+</span><span class='line'>    listen 80;
+</span><span class='line'>    server_name hoge.com;
+</span><span class='line'>    location /jenkins {
+</span><span class='line'>        proxy_pass http://localhost:XXXXX;
+</span><span class='line'>    }
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>$ sudo /etc/init.d/nginx restart</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>参考</h2>
+
+<p><a href="http://saisa.hateblo.jp/entry/2013/07/15/221851">Rails4とJenkinsとGitHubの設定</a></p>
+
+<p><a href="http://d.hatena.ne.jp/yoshi-ken/20120205">CentOS-6へ最新版のnginxを3分でインストールする方法</a></p>
+
+		
+		
+	</div>
+
+<div class="meta">
+	
+</div>
+</article>
 
 
     <article class="post">
@@ -1187,378 +2401,6 @@
 <h4>ホスト側で <a href="http://localhost:8080/">http://localhost:8080/</a> にアクセス</h4>
 
 <p><img src="/images/myimages/jenkinsstart.png" alt="hoge" /></p>
-
-		
-		
-	</div>
-
-<div class="meta">
-	
-</div>
-</article>
-
-
-    <article class="post">
-	<h2 class="title">
-		
-		<a href="/blog/2014/01/19/install-jenkins-on-ubuntu12-dot-04/">
-		
-			Install Jenkins on Ubuntu12.04</a>
-	</h2>
-    <div class="entry-content">
-    <div class="meta">
-      <div class="date">Published on: 
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-01-19T14:40:00+09:00" pubdate data-updated="true">Jan 19<span>th</span>, 2014</time></div>
-      <div class="tags">Tags: 
-
-</div>
-    </div>
-		
-
-		
-		
-	</div>
-
-<div class="meta">
-	
-</div>
-</article>
-
-
-    <article class="post">
-	<h2 class="title">
-		
-		<a href="/blog/2014/01/17/change-theme-of-octpress/">
-		
-			Octopressのテーマ変更</a>
-	</h2>
-    <div class="entry-content">
-    <div class="meta">
-      <div class="date">Published on: 
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-01-17T20:45:00+09:00" pubdate data-updated="true">Jan 17<span>th</span>, 2014</time></div>
-      <div class="tags">Tags: 
-
-
-	<a class='category' href='/blog/categories/octopress/'>octopress</a>
-
-
-</div>
-    </div>
-		<h2>やること</h2>
-
-<ul>
-<li>テーマを決める</li>
-<li>.theme/以下にgit clone</li>
-<li>bundle exec rake &lsquo;install[〇〇]&rsquo;</li>
-<li>bundle exec rake generate</li>
-</ul>
-
-
-<h3><a href="https://github.com/imathis/octopress/wiki/3rd-Party-Octopress-Themes">3rd Party Octopress Themes</a></h3>
-
-<p>から探す</p>
-
-<p>決めたなら</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ cd octopress
-</span><span class='line'>$ git clone GIT_URL .themes/THEME_NAME
-</span><span class='line'>$ bundle exec rake 'install[THEME_NAME]'
-</span><span class='line'>$ bundle exec rake generate</span></code></pre></td></tr></table></div></figure>
-
-
-		
-		
-	</div>
-
-<div class="meta">
-	
-</div>
-</article>
-
-
-    <article class="post">
-	<h2 class="title">
-		
-		<a href="/blog/2014/01/17/creating-my-vagrant-box/">
-		
-			Vagrant上で環境を整えて再Box化</a>
-	</h2>
-    <div class="entry-content">
-    <div class="meta">
-      <div class="date">Published on: 
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-01-17T16:07:00+09:00" pubdate data-updated="true">Jan 17<span>th</span>, 2014</time></div>
-      <div class="tags">Tags: 
-
-
-	<a class='category' href='/blog/categories/vagrant/'>Vagrant</a>
-
-
-</div>
-    </div>
-		<h2>環境</h2>
-
-<ul>
-<li>Vagrant 1.4.3</li>
-<li>Virtual Box 4.3.6</li>
-</ul>
-
-
-<h2>やること</h2>
-
-<ul>
-<li>仮想マシン名の確認</li>
-<li>boxの作成</li>
-</ul>
-
-
-<h3>仮想マシン名の確認</h3>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ VBoxManage list vms</span></code></pre></td></tr></table></div></figure>
-
-
-<p>目的のvmマシンのマシン名をコピー</p>
-
-<h3>boxの作成</h3>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ vagrant package --base マシン名 --output 保存先/〇〇.box</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-		
-		
-	</div>
-
-<div class="meta">
-	
-</div>
-</article>
-
-
-    <article class="post">
-	<h2 class="title">
-		
-		<a href="/blog/2014/01/15/add-path-to-sudo-command/">
-		
-			Sudo Which Gem等でcommand Sudo: Gem: Command Not Found を解決</a>
-	</h2>
-    <div class="entry-content">
-    <div class="meta">
-      <div class="date">Published on: 
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-01-15T12:04:00+09:00" pubdate data-updated="true">Jan 15<span>th</span>, 2014</time></div>
-      <div class="tags">Tags: 
-
-
-	<a class='category' href='/blog/categories/centos/'>CentOS</a>
-
-
-</div>
-    </div>
-		<h2>環境</h2>
-
-<ul>
-<li><a href="http://nomnel.net/blog/centos-system-wide-rbenv-and-ruby-build/">CentOSでsystem wideなrbenv+ruby-build環境を構築する</a>でroot側にrbenvが入ってる</li>
-<li>rubyをなんでも1つrbenvでinstallしてある状態</li>
-</ul>
-
-
-<h2>現象</h2>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ sudo gem list 等をすると
-</span><span class='line'>sudo: gem: command not found</span></code></pre></td></tr></table></div></figure>
-
-
-<p>というのがでる。</p>
-
-<h2>解決方法</h2>
-
-<p>sudoが見に行くPATHに追加する</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ sudo su
-</span><span class='line'>$ visudo</span></code></pre></td></tr></table></div></figure>
-
-
-<p>で以下を変更</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>変更前
-</span><span class='line'>Defaults    secure_path = /sbin:/bin:/usr/sbin:/usr/bin
-</span><span class='line'>変更後
-</span><span class='line'>Defaults    secure_path = /sbin:/bin:/usr/sbin:/usr/bin:/usr/local/rbenv/shims</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-		
-		
-	</div>
-
-<div class="meta">
-	
-</div>
-</article>
-
-
-    <article class="post">
-	<h2 class="title">
-		
-		<a href="/blog/2014/01/13/install-rails-4-dot-0-1-and-postgresql-9-dot-3-on-centos/">
-		
-			CentOSにRails4.0.1とPostgreSQL9.3をinstallするまで</a>
-	</h2>
-    <div class="entry-content">
-    <div class="meta">
-      <div class="date">Published on: 
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-01-13T20:12:00+09:00" pubdate data-updated="true">Jan 13<span>th</span>, 2014</time></div>
-      <div class="tags">Tags: 
-
-
-	<a class='category' href='/blog/categories/centos/'>CentOS</a>, <a class='category' href='/blog/categories/postgresql/'>PostgreSQL</a>, <a class='category' href='/blog/categories/ror/'>RoR</a>
-
-
-</div>
-    </div>
-		<h3>やったこと</h3>
-
-<ul>
-<li>PostgreSQLのrpmをwgetしてrpm -ivh</li>
-<li>yum で install</li>
-<li>gem install pg</li>
-<li>gem install rails</li>
-</ul>
-
-
-<h3>PostgreSQL</h3>
-
-<h4>installまで</h4>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ wget -P /tmp http://yum.postgresql.org/9.3/redhat/rhel-6-x86_64/pgdg-centos93-9.3-1.noarch.rpm
-</span><span class='line'>$ sudo rpm -ivh /tmp/pgdg-centos93-9.3-1.noarch.rpm
-</span><span class='line'>$ sudo yum install -y postgresql93-server postgresql93-devel postgresql93-contrib</span></code></pre></td></tr></table></div></figure>
-
-
-<h4>DBの初期化 &amp; 起動</h4>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ sudo /etc/rc.d/init.d/postgresql-9.3 initdb
-</span><span class='line'>$ sudo /etc/rc.d/init.d/postgresql-9.3 start</span></code></pre></td></tr></table></div></figure>
-
-
-<h4>サーバ起動時にPostgresが起動するように</h4>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ sudo chkconfig postgresql-9.3 on</span></code></pre></td></tr></table></div></figure>
-
-
-<h4>確認</h4>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ chkconfig --list | grep postgresql-9.3
-</span><span class='line'>postgresql-9.3  0:off   1:off   2:on    3:on    4:on    5:on    6:off</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>gem install pg</h3>
-
-<h4>事前準備</h4>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ export PATH=${PATH}:/usr/pgsql-9.3/bin
-</span><span class='line'>$ gem install pg</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>railsのインストール</h3>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ gem install rails</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>確認</h3>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ rails -v</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>参考</h3>
-
-<ul>
-<li><a href="http://morizyun.github.io/blog/postgresql-mac-centos-rails/">Mac MountainLion/CentOS6.4へのPostgreSQL9.2の導入手順</a></li>
-<li><a href="http://morizyun.github.io/blog/heroku-rails4-postgresql-introduction/">Rails4でheroku Pushまでの最短手順 (Haml/bootstrap 3.0/postgresql or MySQL)</a></li>
-</ul>
-
 
 		
 		

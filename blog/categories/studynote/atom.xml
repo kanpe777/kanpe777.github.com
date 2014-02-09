@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: studynote | kanlog]]></title>
+  <link href="http://kanpe777.github.io/blog/categories/studynote/atom.xml" rel="self"/>
+  <link href="http://kanpe777.github.io/"/>
+  <updated>2014-02-09T14:50:19+09:00</updated>
+  <id>http://kanpe777.github.io/</id>
+  <author>
+    <name><![CDATA[kanpe777]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[HTTP ノート その1]]></title>
+    <link href="http://kanpe777.github.io/blog/2014/01/26/http-note-1/"/>
+    <updated>2014-01-26T17:30:00+09:00</updated>
+    <id>http://kanpe777.github.io/blog/2014/01/26/http-note-1</id>
+    <content type="html"><![CDATA[<p>Fiddlerで色々</p>
+
+<h2>リクエスト・メッセージ</h2>
+
+<h3>1行目 : リクエストライン</h3>
+
+<p><code>
+GET /hoge/fuga.php HTTP/1.1
+</code></p>
+
+<h4>GET</h4>
+
+<ul>
+<li>メソッド</li>
+</ul>
+
+
+<h4>/hoge/fuga.php</h4>
+
+<ul>
+<li>リクエストURL</li>
+</ul>
+
+
+<h4>HTTP/1.1</h4>
+
+<ul>
+<li>プロトコルバージョン</li>
+</ul>
+
+
+<h3>2行目~ : ヘッダ</h3>
+
+<p>リクエストラインの次の行からは<code>ヘッダ</code>(1行毎にヘッダと呼ぶ?)
+ * Accept
+ * Referer
+ * Accept-Language
+ * HOST
+ * &hellip;</p>
+
+<p>色々</p>
+
+<h2>レスポンス・メッセージ</h2>
+
+<h3>ステータスライン</h3>
+
+<p><code>
+HTTP/1.1 200 OK
+</code></p>
+
+<h4>HTTP/1.1</h4>
+
+<ul>
+<li>プロトコルバージョン</li>
+</ul>
+
+
+<h4>200</h4>
+
+<ul>
+<li>ステータスコード</li>
+</ul>
+
+
+<table>
+<thead>
+<tr>
+<th></th>
+<th align="left">ステータスコード</th>
+<th align="left">概要</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td align="left">1xx</td>
+<td align="left">処理が継続中</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">2xx</td>
+<td align="left">正常終了</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">3xx</td>
+<td align="left">リダイレクト</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">4xx</td>
+<td align="left">クライアントエラー</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">5xx</td>
+<td align="left">サーバーエラー</td>
+</tr>
+</tbody>
+</table>
+
+
+<h4>OK</h4>
+
+<ul>
+<li>テキストフレーズ</li>
+</ul>
+
+
+<h3>ヘッダ(レスポンスヘッダ)</h3>
+
+<h4>Content-Length</h4>
+
+<ul>
+<li>ボディのバイト数</li>
+</ul>
+
+
+<h4>Content-Type</h4>
+
+<ul>
+<li>MIMEタイプというリソースの種類の指定</li>
+</ul>
+
+
+<table>
+<thead>
+<tr>
+<th></th>
+<th align="left">MIMEタイプ</th>
+<th align="left">意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td align="left">text/plain</td>
+<td align="left">テキスト</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">text/html</td>
+<td align="left">HTML文書</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">application/xml</td>
+<td align="left">XML文書</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">text/css</td>
+<td align="left">CSS</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">image/gif</td>
+<td align="left">GIF</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">image/jepg</td>
+<td align="left">JPEG</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">image/gif</td>
+<td align="left">PNG</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">application/pdf</td>
+<td align="left">PDF</td>
+</tr>
+</tbody>
+</table>
+
+
+<p><code>charset=UTF-8</code>はHTTPレスポンスに対する文字エンコーディング</p>
+
+<h3>POSTメソッド</h3>
+
+<ul>
+<li>GETメソッドと異なりメッセージボディをもつ</li>
+</ul>
+
+
+<h4>メッセージボディ</h4>
+
+<ul>
+<li>POSTメソッドのリクエストのボディに送信される値がある</li>
+<li>送信される値に関するヘッダがContent-Length, Content-Type</li>
+<li>Content-Length = ボディのバイト数</li>
+<li></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

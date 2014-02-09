@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: network | kanlog]]></title>
+  <link href="http://kanpe777.github.io/blog/categories/network/atom.xml" rel="self"/>
+  <link href="http://kanpe777.github.io/"/>
+  <updated>2014-02-09T14:50:19+09:00</updated>
+  <id>http://kanpe777.github.io/</id>
+  <author>
+    <name><![CDATA[kanpe777]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[ネットワークのお勉強の際のノート]]></title>
+    <link href="http://kanpe777.github.io/blog/2014/01/25/note-1-about-network/"/>
+    <updated>2014-01-25T17:20:00+09:00</updated>
+    <id>http://kanpe777.github.io/blog/2014/01/25/note-1-about-network</id>
+    <content type="html"><![CDATA[<p>ノート</p>
+
+<h2>プロキシ</h2>
+
+<ul>
+<li>DNSキャッシュサーバーのように通信を代理で行ってくれるサーバー</li>
+<li>通信を代理で行う</li>
+</ul>
+
+
+<p><img src="http://kanpe777.github.io/images/myimages/proxy_0.png" alt="プロキシのイメージ" width="300" height="300"></p>
+
+<h3>プロキシのメリット</h3>
+
+<ul>
+<li>実際に通信するのはプロキシなので、PC側が安全</li>
+</ul>
+
+
+<h2>リバースプロキシ</h2>
+
+<ul>
+<li>プロキシはPC側がやるもの、リバースプロキシはWebサーバー側がやるもの</li>
+</ul>
+
+
+<h3>リバースプロキシのメリット</h3>
+
+<ul>
+<li>実際に通信するのはリーバスプロキシサーバーを通すようにするので、Webサーバ側の安全性があがる</li>
+</ul>
+
+
+<h2>参考</h2>
+
+<p><a href="http://beginners-network.com/proxy.html">ネットワーク入門サイト</a></p>
+]]></content>
+  </entry>
+  
+</feed>

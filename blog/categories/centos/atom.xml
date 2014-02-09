@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: CentOS | kanlog]]></title>
+  <title><![CDATA[Category: centos | kanlog]]></title>
   <link href="http://kanpe777.github.io/blog/categories/centos/atom.xml" rel="self"/>
   <link href="http://kanpe777.github.io/"/>
-  <updated>2014-01-25T15:23:14+09:00</updated>
+  <updated>2014-02-09T14:50:19+09:00</updated>
   <id>http://kanpe777.github.io/</id>
   <author>
     <name><![CDATA[kanpe777]]></name>
@@ -14,257 +14,559 @@
 
   
   <entry>
-    <title type="html"><![CDATA[sudo which gem等でcommand sudo: gem: command not found を解決]]></title>
-    <link href="http://kanpe777.github.io/blog/2014/01/15/add-path-to-sudo-command/"/>
-    <updated>2014-01-15T12:04:00+09:00</updated>
-    <id>http://kanpe777.github.io/blog/2014/01/15/add-path-to-sudo-command</id>
-    <content type="html"><![CDATA[<h2>環境</h2>
+    <title type="html"><![CDATA[PostgreSQLを使ったRoRをGitHubからJenkinsを通してHerokuまで]]></title>
+    <link href="http://kanpe777.github.io/blog/2014/01/31/play-ror-and-jenkins-on-centos/"/>
+    <updated>2014-01-31T14:56:00+09:00</updated>
+    <id>http://kanpe777.github.io/blog/2014/01/31/play-ror-and-jenkins-on-centos</id>
+    <content type="html"><![CDATA[<p><a href="http://kanpe777.github.io/blog/2014/01/22/first-using-ror-and-jenkins/">参考をそのまま試した備忘ログ</a> のCentOS and PostgreSQLを使用版</p>
+
+<p>JenkinsもVPS上にやってるので最終的にはHerokuへの自動デプロイまでやったことの流れ
+(ついでに勉強したことのノート)</p>
+
+<h2>環境</h2>
 
 <ul>
-<li><a href="http://nomnel.net/blog/centos-system-wide-rbenv-and-ruby-build/">CentOSでsystem wideなrbenv+ruby-build環境を構築する</a>でroot側にrbenvが入ってる</li>
-<li>rubyをなんでも1つrbenvでinstallしてある状態</li>
+<li>CentOS 6.5</li>
+<li>ruby 2.0.0dev</li>
+<li>rails 4.0.2</li>
+<li>postgreSQL 9.3</li>
 </ul>
 
 
-<h2>現象</h2>
+<p>以上の環境が既に整ってることが前提</p>
+
+<h2>1. アプリの作成</h2>
+
+<h3>1.1 rails new</h3>
 
 <p><code>
-$ sudo gem list 等をすると
-sudo: gem: command not found
+$ rails new my_circle --database=postgresql --skip-test-unit --skip-bundle
 </code></p>
 
-<p>というのがでる。</p>
+<h4>Note : <code>--database=postgresql</code> == <code>-d postgresql</code></h4>
 
-<h2>解決方法</h2>
+<blockquote><p>&mdash;database=postgresqlオプションを入れた時と入れない時の違いは結構あるので注意</p>
 
-<p>sudoが見に行くPATHに追加する</p>
+<p><a href="http://qa.atmarkit.co.jp/q/2970">rails new project -d postgresql を指定した時に変更される部位</a></p></blockquote>
+
+<h4>Note : <code>--skip-test-unit</code> == <code>-T</code></h4>
+
+<blockquote><p>標準だとTest::Unitというテスティングフレームワークが使用される(RSpecを使用したい)</p></blockquote>
+
+<h4>Note : <code>--skip-bundle</code></h4>
+
+<blockquote><p><code>bundle install</code>を行わない</p>
+
+<p>どうせあとでちょっといじってまたbundle installする</p></blockquote>
+
+<h4>そのままだと &lsquo;autodetect&rsquo;: Could not find a JavaScript runtime. See <a href="https://github.com/sstephenson/execjs">https://github.com/sstephenson/execjs</a> for a list of available runtimes. (ExecJS::RuntimeUnavailable) と出る</h4>
+
+<p>```
+$ vim Gemfile</p>
+
+<p>Before</p>
+
+<h1>gem &lsquo;therubyracer&rsquo;, :platforms => :ruby</h1>
+
+<p>After
+gem &lsquo;therubyracer&rsquo;, :platforms => :ruby</p>
+
+<p>$ bundle install
+```</p>
+
+<h3>1.1 postgresの方でuserとDBの作成</h3>
 
 <p><code>
-$ sudo su
-$ visudo
-</code>
-で以下を変更
+$ createuser my_circle -s
+$ createdb my_circle_development -O my_circle
+</code></p>
+
+<h4><code>createuser</code> の -s/-Sオプション</h4>
+
+<blockquote><p>スーパーユーザとして追加される</p></blockquote>
+
+<h4><code>createdb</code> の -Oオプション</h4>
+
+<blockquote><p>新しいDBの所有者となるDBUserを指定</p></blockquote>
+
+<h3>1.2 userメンテ画面をscaffold機能を使用して作成</h3>
+
+<p><code>
+$ rails g scaffold user name:string age:integer
+</code></p>
+
+<h3>1.3 DBの作成 &amp; テスト用DBの作成</h3>
+
+<p><code>
+$ rake db:migrate
+$ rake db:test:clone
+</code></p>
+
+<h3>1.4 確認</h3>
+
+<p><code>
+$ rails s
+</code></p>
+
+<p><a href="localhost:3000/users">localhost:3000/users</a></p>
+
+<ul>
+<li>rails s -pXXXX でポート番号を指定可能</li>
+</ul>
+
+
+<h2>2. RSpecのセットアップ</h2>
+
+<p>```
+$ vim Gemfile</p>
+
+<h1>以下を追記</h1>
+
+<p>group :development, :test do
+  gem &lsquo;rspec-rails&rsquo;, &lsquo;~> 2.0&rsquo;
+end</p>
+
+<p>```</p>
+
+<p><code>
+$ bundle install
+$ rails generate rspec:install
+</code></p>
+
+<h4>rails generate rspec:install</h4>
+
+<blockquote><p>RSpecをセットアップするためのコマンド</p>
+
+<p>これで、プロジェクトディレクトリの下にspecディレクトリができたのが確認可能(他には.spec等)</p></blockquote>
+
+<h3>2.1 RSpecの出力フォーマットをドキュメント形式に変更</h3>
+
+<p>```
+$ vim .rspec</p>
+
+<p>Before
+&mdash;color</p>
+
+<p>After
+&mdash;color &mdash;format documentation
+```</p>
+
+<h2>3. アプリケーションの修正とユニットテストの作成</h2>
+
+<h3>3.1 Userモデルに対してバリデーションの追加</h3>
+
+<p>```
+$ vim app/models/user.rb</p>
+
+<h1>必須入力 &amp;&amp; 最大文字数が20</h1>
+
+<p>  validates :name,</p>
+
+<pre><code>:presence =&gt; true,
+:length =&gt; {:maximum =&gt; 20}
+</code></pre>
+
+<h1>必須入力 &amp;&amp; 入力値が0 &ndash; 1000の間</h1>
+
+<p>  validates :age,</p>
+
+<pre><code>:presence =&gt; true,
+:numericality =&gt; {:greater_than_or_equal_to =&gt; 0,
+:less_than_or_equal_to =&gt; 1000}
+</code></pre>
+
+<p>```</p>
+
+<h3>3.2 バリデーションをテストするコード</h3>
+
+<p>```
+$ mkdir spec/models
+$ vim spec/models/user_spec.rb</p>
+
+<h1>&ndash;<em>&ndash; coding: utf-8 &ndash;</em>&ndash;</h1>
+
+<p>require &lsquo;spec_helper&rsquo;</p>
+
+<p>describe User do
+  context &lsquo;何も入力しなかった場合&rsquo; do</p>
+
+<pre><code>subject{User.new}
+it { should_not be_valid }
+it { should have(1).errors_on(:name) }
+it { should have(2).errors_on(:age) }
+</code></pre>
+
+<p>  end</p>
+
+<p>  context &lsquo;名前が文字数をオーバーしている場合&rsquo; do</p>
+
+<pre><code>subject{User.new(name: 'aaaaaaaaaabbbbbbbbbbc',age: 10)}
+it { should_not be_valid }
+it { should have(1).errors_on(:name) }
+it { should have(0).errors_on(:age) }
+</code></pre>
+
+<p>  end</p>
+
+<p>  context &lsquo;年齢が範囲を超えている場合&rsquo; do</p>
+
+<pre><code>subject{User.new(name: 'taro',age: 1001)}
+it {should_not be_valid}
+it{ should have(0).errors_on(:name) }
+it{ should have(1).errors_on(:age) }
+</code></pre>
+
+<p>  end</p>
+
+<p>  context &lsquo;正常なデータがセットされた場合&rsquo; do</p>
+
+<pre><code>subject{User.new(name: 'taro',age: 20)}
+it {should be_valid}
+</code></pre>
+
+<p>  end
+end</p>
+
+<p>```</p>
+
+<h4>ブラウザでも確認可能</h4>
+
+<ul>
+<li>何も入力しないでuserを追加しようとすると怒られる</li>
+</ul>
+
+
+<h3>3.3 テストの実行</h3>
+
+<p>```
+$ bundle exec rspec
+(以下のような結果がでるはず)</p>
+
+<p>User
+  正常なデータがセットされた場合</p>
+
+<pre><code>should be valid
+</code></pre>
+
+<p>  名前が文字数をオーバーしている場合
+[deprecated] I18n.enforce_available_locales will default to true in the future. If you really want to skip validation of your locale you can set I18n.enforce_available_locales = false to avoid this message.</p>
+
+<pre><code>should not be valid
+should have 1 errors on :name
+should have 0 errors on :age
+</code></pre>
+
+<p>  年齢が範囲を超えている場合</p>
+
+<pre><code>should not be valid
+should have 0 errors on :name
+should have 1 errors on :age
+</code></pre>
+
+<p>  何も入力しなかった場合</p>
+
+<pre><code>should not be valid
+should have 1 errors on :name
+should have 2 errors on :age
+</code></pre>
+
+<p>Finished in 0.1475 seconds
+10 examples, 0 failures</p>
+
+<p>Randomized with seed 15644</p>
+
+<p>```</p>
+
+<h2>4. インテグレーションテストの作成</h2>
+
+<h3>4.1 GemfileにRSpecをGherkin(ガーキン)記法で書けるようなgemを記述(turnip)</h3>
+
+<p>```
+$ vim Gefile</p>
+
+<p>&hellip;
+group :development, :test do
+  gem &lsquo;rspec-rails&rsquo;, &lsquo;~> 2.0&rsquo;
+  gem &lsquo;capybara&rsquo;
+  gem &lsquo;turnip&rsquo;
+end</p>
+
+<p>```</p>
+
+<h4>capybara</h4>
+
+<blockquote><p>仮想的なwebブラウザでテストを行うために必要</p></blockquote>
+
+<h4>turnip</h4>
+
+<blockquote><p>gherkin記法でRSpecを書くことが可能なフレームワーク</p></blockquote>
+
+<p>```
+$ bundle install
+$ vim .rspec</p>
+
+<p>Before
+&mdash;color &mdash;format documentation</p>
+
+<p>After
+-r turnip/rspec &mdash;color &mdash;format documentation</p>
+
+<p>```</p>
+
+<h3>4.2 Turnipを実行できるようにする</h3>
+
+<p>```
+$ vim spec/spec_helper.rb</p>
+
+<p>&hellip;
+require &lsquo;rspec/autorun&rsquo;#(この行の下辺りに)</p>
+
+<h1>記述</h1>
+
+<p>Dir.glob(&ldquo;spec/<em>*/</em>steps.rb&rdquo;) { |f| load f, true}</p>
+
+<p>require &lsquo;capybara/dsl&rsquo;
+require &lsquo;capybara/rspec&rsquo;
+require &lsquo;turnip&rsquo;
+require &lsquo;turnip/capybara&rsquo;</p>
+
+<p>&hellip;</p>
+
+<p>```</p>
+
+<h3>4.3 featureファイルとstepファイルの記述</h3>
+
+<p>users.feature
+```
+$ mkdir spec/feature
+$ vim spec/feature/users.feature</p>
+
+<h1>encoding: utf-8</h1>
+
+<h1>language: ja</h1>
+
+<p>機能: ユーザー管理
+  ユーザー管理を行いたい。なぜならサークル活動に参加するメンバーを管理する必要があるからだ。</p>
+
+<p>  シナリオ: 一覧画面から新規登録画面に移動する</p>
+
+<pre><code>前提 ユーザー管理の一覧画面を開く
+もし "New User" リンクをクリックする
+ならば ユーザー管理の新規登録画面が表示される
+</code></pre>
+
+<p>  シナリオ: 登録画面で登録すると詳細画面に移動する</p>
+
+<pre><code>前提 ユーザー管理の新規登録画面を開く
+もし "Name" に "アリス" と入力する
+かつ "Age" に "16" と入力する
+かつ "Create User" ボタンをクリックする
+ならば ユーザー管理の詳細画面が表示される
+</code></pre>
+
+<p>```</p>
+
+<p>users_steps.rb
+```
+$ mkdir spec/steps/
+$ vim spec/steps/users_steps.rb</p>
+
+<h1>encoding: utf-8</h1>
+
+<p>step &lsquo;ユーザー管理の一覧画面を開く&rsquo; do
+  visit &lsquo;/users&rsquo;
+end</p>
+
+<p>step &lsquo;画面を目視&rsquo; do
+  save_and_open_page
+end</p>
+
+<p>step &lsquo;:name リンクをクリックする&rsquo; do |name|
+  first(:link, name).click
+end</p>
+
+<p>step &lsquo;:name ボタンをクリックする&rsquo; do |name|
+  first(:button, name).click
+end</p>
+
+<p>step &lsquo;ユーザー管理の新規登録画面が表示される&rsquo; do
+  current_path = URI.parse(current_url).path
+  current_path.should == &lsquo;/users/new&rsquo;
+end</p>
+
+<p>step &lsquo;ユーザー管理の詳細画面が表示される&rsquo; do
+  current_path = URI.parse(current_url).path
+  current_path.should == &lsquo;/users/1&rsquo;
+end</p>
+
+<p>step &lsquo;ユーザー管理の新規登録画面を開く&rsquo; do
+  visit &lsquo;/users/new&rsquo;
+end</p>
+
+<p>step &lsquo;:field に :value と入力する&rsquo; do |field, value|
+  fill_in(field, :with => value)
+end
+```</p>
+
+<h3>4.4 テストの実行</h3>
+
+<p><code>
+$ bundle exec rspec
+成功するはず
+</code></p>
+
+<h4>注意</h4>
+
+<blockquote><p><code>$ rake db:test:clone</code>をしないと失敗する可能性がある</p>
+
+<p>複数回連続では出来ない。多分DBに要素が残りっぱなし</p></blockquote>
+
+<h2>5. Jenkinsでnew Jobを作成</h2>
+
+<p>ここらへんは、前回の記事と一緒</p>
+
+<h3><a href="http://kanpe777.github.io/blog/2014/01/22/first-using-ror-and-jenkins/">参考をそのまま試した備忘ログ</a></h3>
+
+<h3>ネットワーク設定あたりの注意点</h3>
+
+<p>localではつながるが、vps上では色々やらないといけなかった
+nginxで動かすので <code>yum install nginx</code>等やって
+```
+$ vim /etc/nginx/nginx.com</p>
+
+<h2>&mdash; (ry</h2>
+
+<p>http {
+  ##&mdash; (ry</p>
+
+<pre><code>  listen 80;
+server_name &lt;ホスト名&gt;; 
+location {
+  proxy_pass http://localhost:80; 
+}  
+</code></pre>
+
+<p>  }
+}
+```</p>
+
+<blockquote><p>ssh hoge@&lt;ホスト名></p></blockquote>
+
+<p><code>
+$ sudo service nginx restart
+</code></p>
+
+<ul>
+<li><a href="http://%E3%83%9B%E3%82%B9%E3%83%88%E5%90%8D/jenkins">http://%E3%83%9B%E3%82%B9%E3%83%88%E5%90%8D/jenkins</a> でアクセス可能</li>
+</ul>
+
+
+<h2>6. いざ実行しようとしたら、PostgreSQLの認証で怒られた</h2>
+
+<p>こんな感じ怒られる
 <code>
-変更前
-Defaults    secure_path = /sbin:/bin:/usr/sbin:/usr/bin
-変更後
-Defaults    secure_path = /sbin:/bin:/usr/sbin:/usr/bin:/usr/local/rbenv/shims
+FATAL: Peer authentication failed for user "postgres"
 </code></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[CentOSにRails4.0.1とPostgreSQL9.3をinstallするまで]]></title>
-    <link href="http://kanpe777.github.io/blog/2014/01/13/install-rails-4-dot-0-1-and-postgresql-9-dot-3-on-centos/"/>
-    <updated>2014-01-13T20:12:00+09:00</updated>
-    <id>http://kanpe777.github.io/blog/2014/01/13/install-rails-4-dot-0-1-and-postgresql-9-dot-3-on-centos</id>
-    <content type="html"><![CDATA[<h3>やったこと</h3>
+
+<h3>6.1 解決方法</h3>
 
 <ul>
-<li>PostgreSQLのrpmをwgetしてrpm -ivh</li>
-<li>yum で install</li>
-<li>gem install pg</li>
-<li>gem install rails</li>
+<li>pg_hba.confをいじる</li>
 </ul>
 
 
-<h3>PostgreSQL</h3>
+<p>PostgreSQL 9.3 でやってるので自分の環境では
+```
+$sudo vim /var/lib/pgsql/9.3/data/pg_hba.conf</p>
 
-<h4>installまで</h4>
+<h2>変更前</h2>
 
-<p><code>
-$ wget -P /tmp http://yum.postgresql.org/9.3/redhat/rhel-6-x86_64/pgdg-centos93-9.3-1.noarch.rpm
-$ sudo rpm -ivh /tmp/pgdg-centos93-9.3-1.noarch.rpm
-$ sudo yum install -y postgresql93-server postgresql93-devel postgresql93-contrib
-</code></p>
+<h1>&ldquo;local&rdquo; is for Unix domain socket connections only</h1>
 
-<h4>DBの初期化 &amp; 起動</h4>
+<p>local   all             all                                     peer</p>
 
-<p><code>
-$ sudo /etc/rc.d/init.d/postgresql-9.3 initdb
-$ sudo /etc/rc.d/init.d/postgresql-9.3 start
-</code></p>
+<h2>変更後</h2>
 
-<h4>サーバ起動時にPostgresが起動するように</h4>
+<h1>&ldquo;local&rdquo; is for Unix domain socket connections only</h1>
+
+<p>local   all             all                                     trust
+```</p>
 
 <p><code>
-$ sudo chkconfig postgresql-9.3 on
+$ sudo service postgresql-9.3 restart
 </code></p>
-
-<h4>確認</h4>
-
-<p><code>
-$ chkconfig --list | grep postgresql-9.3
-postgresql-9.3  0:off   1:off   2:on    3:on    4:on    5:on    6:off
-</code></p>
-
-<h3>gem install pg</h3>
-
-<h4>事前準備</h4>
-
-<p><code>
-$ export PATH=${PATH}:/usr/pgsql-9.3/bin
-$ gem install pg
-</code></p>
-
-<h3>railsのインストール</h3>
-
-<p><code>
-$ gem install rails
-</code></p>
-
-<h3>確認</h3>
-
-<p><code>
-$ rails -v
-</code></p>
-
-<h3>参考</h3>
 
 <ul>
-<li><a href="http://morizyun.github.io/blog/postgresql-mac-centos-rails/">Mac MountainLion/CentOS6.4へのPostgreSQL9.2の導入手順</a></li>
-<li><a href="http://morizyun.github.io/blog/heroku-rails4-postgresql-introduction/">Rails4でheroku Pushまでの最短手順 (Haml/bootstrap 3.0/postgresql or MySQL)</a></li>
+<li>md5では失敗したorz</li>
 </ul>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[CentOS 6.5 にrbenvでrubyをインストールするまで]]></title>
-    <link href="http://kanpe777.github.io/blog/2014/01/13/install-rbenv-on-centos-6-dot-5/"/>
-    <updated>2014-01-13T17:54:00+09:00</updated>
-    <id>http://kanpe777.github.io/blog/2014/01/13/install-rbenv-on-centos-6-dot-5</id>
-    <content type="html"><![CDATA[<h3>やったこと</h3>
 
-<ol>
-<li>rbenvのインストール</li>
-<li>ruby-buildのインストール</li>
-<li>rbenvでrubyのインストール</li>
-</ol>
+<h2>7. Jenkinsでのjob中にてrspecでsyntaxエラー</h2>
 
-
-<h3>1. rbenv</h3>
-
-<p><code>
-$ git clone git://github.com/sstephenson/rbenv.git ~/.rbenv
-$ echo 'export PATH="$HOME/.rbenv/bin:$PATH"' &gt;&gt; ~/.zshrc
-$ echo 'eval "$(rbenv init -)"' &gt;&gt; ~/.zshrc
-</code></p>
-
-<h3>2. ruby-build</h3>
-
-<p><code>
-$ git clone git://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
-$ cd ~/.rbenv/plugins/ruby-build
-$ sudo ./install.sh
-</code></p>
-
-<h3>3. ruby 2.1のインストール</h3>
-
-<ul>
-<li>依存系ファイルのインストール</li>
-<li>install
+<p>3つのテストに分ける段階での、integration_testの方で
 <code>
-$ yum install --enablerepo=epel make gcc zlib-devel openssl-devel readline-devel ncurses-devel gdbm-devel db4-devel libffi-devel tk-devel libyaml-devel
-$ rbenv install 2.1.0
-$ rbenv rehash
-$ rbenv global 2.1.0
-$ ruby -v で確認
-</code></li>
-</ul>
-
-
-<h4>おまけ: rbenvでインストール可能なやつ一覧</h4>
-
-<p><code>
- $ rbenv install -l
-...
-  2.0.0-rc2
-  2.1.0
-  2.1.0-dev
-  2.1.0-preview1
-  2.1.0-preview2
-  2.1.0-rc1
-  2.2.0-dev
-...
+bundle install --path vendor/bundle
+bundle exec rake db:migrate
+bundle exec rake db:test:clone
+bundle exec rspec spec/*/*.feature
 </code></p>
 
-<h3>参考</h3>
+<p>ここで以下の様なエラー
+```
+$ bundle exec rspec spec/<em>/</em>.feature        <br/>
+syntax error, unexpected &lsquo;:&rsquo;, expecting end-of-input (SyntaxError)
+機能: ユーザー管理</p>
 
-<ul>
-<li><a href="http://qiita.com/IK12_info/items/641fbdc4082e9f56f1c5">CentOS ruby-build, rbenvのインストール方法(Qiita)</a></li>
-<li><a href="http://nomnel.net/blog/centos-system-wide-rbenv-and-ruby-build/">CentOSでsystem wideなrbenv+ruby-build環境を構築する</a></li>
-</ul>
+<pre><code>    ^
+</code></pre>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[yum install emacs24 on CentOS 6.5]]></title>
-    <link href="http://kanpe777.github.io/blog/2014/01/12/yum-install-emacs24-on-centos-6-dot-5/"/>
-    <updated>2014-01-12T14:48:00+09:00</updated>
-    <id>http://kanpe777.github.io/blog/2014/01/12/yum-install-emacs24-on-centos-6-dot-5</id>
-    <content type="html"><![CDATA[<h3>目的</h3>
+<p>```</p>
 
-<ul>
-<li>sourceからではなく、yumコマンドでemacs24をCentOSに入れる</li>
-</ul>
+<h3>7.1 GitHub上に.rpsecファイルがないのが問題</h3>
 
+<p>ローカルなリポジトリにて
+```
+$ vim .gitignore
+.rspecを消す</p>
 
-<h3>やったこと</h3>
+<p>$ git stage .gitignore
+$ git commit -m &ldquo;Fix .gitignore&rdquo;
+$ git push
+```</p>
 
-<ul>
-<li>wgetコマンドのインストール</li>
-<li>yumのリポジトリの追加</li>
-<li>yum rpm -import</li>
-<li>yum install emacs-24.2-4.el6.x86_64</li>
-</ul>
-
-
-<h3>詳細</h3>
-
-<h4>参考:<a href="http://vitalvastness.wordpress.com/2013/07/03/installing-emacs-24-on-centos-6/comment-page-1/">Installing Emacs 24 on Centos 6</a></h4>
-
-<p><code>
- $ cd /etc/yum.repos.d
- $ sudo wget http://pj.freefaculty.org/EL/pjku.repo
- $ sudo rpm --import http://pj.freefaculty.org/EL/PaulJohnson-BinaryPackageSigningKey
- $ sudo yum install emacs-24.2-4.el6.x86_64
- $ emacs -versionで確認
-</code></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[VagrantでCentOS 6.5 をインストール]]></title>
-    <link href="http://kanpe777.github.io/blog/2014/01/12/install-centos-6-dot-5-by-vagarant/"/>
-    <updated>2014-01-12T13:41:00+09:00</updated>
-    <id>http://kanpe777.github.io/blog/2014/01/12/install-centos-6-dot-5-by-vagarant</id>
-    <content type="html"><![CDATA[<h3>やったこと</h3>
-
-<ul>
-<li>最新版のVagrantのインストール(1.2.7 &ndash;> 1.4.3)</li>
-<li>最新版のVirtualBoxのインストール(4.2.12 &ndash;> 4.3.6)</li>
-<li>vagrant box add コマンドでCentOS 6.5 のboxを追加する</li>
-<li>vagrant init コマンドでインストール</li>
-<li>vagrant up コマンドで起動</li>
-</ul>
-
-
-<h3>詳細</h3>
-
-<h4>参考:<a href="http://www.vagrantbox.es/">Vagrantbox.es</a></h4>
-
-<p><code>
- $ vagrant box add centos65-x86_64-20131205 https://github.com/2creatives/vagrant-centos/releases/download/v6.5.1/centos65-x86_64-20131205.box
- $ mkdir centos_6.5.1
- $ cd centos_6.5.1
- $ vagrant init centos65-x86_64-20131205
- $ vagrant up
- $ vagrant ssh
+<p>.rpsecの中身
+<code>
+-r turnip/rspec --color --format documentation
 </code></p>
 
-<p><code>vagrant ssh</code> コマンドで確認可能</p>
+<h2>8 Herokuへpushしようとすると激おこ</h2>
+
+<h4>原因:Jenkinsが頭よくて、masterを汚さないよう一時branchでやってる</h4>
+
+<h3>8.1 解決方法</h3>
+
+<p><code>
+git checkout -b temp
+git push heroku temp:master
+git checkout master
+git branch -D temp
+</code></p>
+
+<p>という風にやる</p>
+
+<p>やっと全部できた</p>
+
+<h2>参考</h2>
+
+<ul>
+<li><a href="http://railsdoc.com/rails">Railsドキュメント</a></li>
+<li><a href="http://rice-american.github.io/blog/2014/01/27/nginx-jenkins/">さくらVPSにJenkinsとNginxでJenkinsサーバを構築</a></li>
+<li><a href="http://www.postgresql.jp/document/9.3/html/auth-pg-hba-conf.html">PostgreSQL 9.3.2文書 第19章 クライアント認証</a></li>
+<li><a href="http://stackoverflow.com/questions/18664074/getting-error-peer-authentication-failed-for-user-postgres-when-trying-to-ge">Getting error: Peer authentication failed for user &ldquo;postgres”, when trying to get pgsql working with rails</a></li>
+<li><a href="http://rice-american.github.io/blog/2014/02/08/jenkins-rspec/">Bundle Exec Rspec spec/<em>/</em>.featureが失敗する件</a></li>
+<li><a href="http://junjiblg.hatenablog.jp/entry/2013/12/06/230803">【Jenkins】JenkinsでHerokuにデプロイすると「Everything up-to-date」と表示される</a></li>
+</ul>
+
 ]]></content>
   </entry>
   

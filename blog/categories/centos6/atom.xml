@@ -4,7 +4,7 @@
   <title><![CDATA[Category: CentOS6 | kanlog]]></title>
   <link href="http://kanpe777.github.io/blog/categories/centos6/atom.xml" rel="self"/>
   <link href="http://kanpe777.github.io/"/>
-  <updated>2014-01-25T15:23:14+09:00</updated>
+  <updated>2014-02-09T14:50:19+09:00</updated>
   <id>http://kanpe777.github.io/</id>
   <author>
     <name><![CDATA[kanpe777]]></name>
@@ -12,6 +12,57 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Install Jenkins on CentOS6.4]]></title>
+    <link href="http://kanpe777.github.io/blog/2014/01/25/install-jenkins-on-centos6-dot-4/"/>
+    <updated>2014-01-25T15:25:00+09:00</updated>
+    <id>http://kanpe777.github.io/blog/2014/01/25/install-jenkins-on-centos6-dot-4</id>
+    <content type="html"><![CDATA[<h2>環境</h2>
+
+<ul>
+<li>CentOS 6.4</li>
+</ul>
+
+
+<p>```
+$ sudo yum groupinstall &ldquo;Development Tools&rdquo;
+$ sudo rpm -ivh <a href="http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm">http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm</a>
+$ sudo yum install -y nginx
+$ sudo service nginx start
+$ sudo chkconfig nginx on
+$ sudo yum install -y wget
+$ sudo yum install -y java-1.7.0-openjdk java-1.7.0-openjdk-devel
+$ sudo wget -O /etc/yum.repos.d/jenkins.repo <a href="http://pkg.jenkins-ci.org/redhat/jenkins.repo">http://pkg.jenkins-ci.org/redhat/jenkins.repo</a>
+$ sudo rpm &mdash;import <a href="http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key">http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key</a>
+$ sudo vim /etc/sysconfig/jenkins</p>
+
+<p>JENKINS_PORT=&ldquo;XXXXX&rdquo;
+JENKINS_ARGS=&ldquo;&mdash;prefix=/jenkins &mdash;httpPort=${JENKINS_PORT} &mdash;ajp13Port=${JENKINS_AJP_PORT}&rdquo;</p>
+
+<p>$ sudo vim /etc/nginx/conf.d/jenkins.conf</p>
+
+<p>server {</p>
+
+<pre><code>listen 80;
+server_name hoge.com;
+location /jenkins {
+    proxy_pass http://localhost:XXXXX;
+}
+</code></pre>
+
+<p>}</p>
+
+<p>$ sudo /etc/init.d/nginx restart
+```</p>
+
+<h2>参考</h2>
+
+<p><a href="http://saisa.hateblo.jp/entry/2013/07/15/221851">Rails4とJenkinsとGitHubの設定</a></p>
+
+<p><a href="http://d.hatena.ne.jp/yoshi-ken/20120205">CentOS-6へ最新版のnginxを3分でインストールする方法</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[CentOS6.4 に システムワイドなrbenvでrubyをインストール]]></title>

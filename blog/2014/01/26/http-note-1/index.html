@@ -1,0 +1,348 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>HTTP ノート その1 - kanlog</title>
+    <meta name="author" content="kanpe777">
+    
+	<meta name="description" content="Fiddlerで色々 リクエスト・メッセージ 1行目 : リクエストライン 1
+GET /hoge/fuga.php HTTP/1.1 GET メソッド /hoge/fuga.php リクエストURL HTTP/1.1 プロトコルバージョン 2行目~ : ヘッダ &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="kanlog" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.ico" rel="shortcut icon">
+    <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+
+    <link href='http://fonts.googleapis.com/css?family=Slackey' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Amethysta' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+    <script type="text/javascript" src="/javascripts/jquery-tapir.js"></script>
+
+    <!-- remove or comment it to disable ajaxification -->   
+    <script src="/javascripts/ajaxify.js"></script>
+   
+    
+    
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-44219212-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+    <div id="wrapper">
+    <header id="header" class="inner"><!-- for more effects see _animate.scss -->
+<h1 class="animated bounceInDown">
+    <div id="headerbg">
+        kanpe777
+    </div>
+</h1>
+<br>
+
+<ul id="social-links" style="text-align:center">
+  
+  
+  
+  
+  
+  
+  
+  
+</ul>
+
+
+<!-- use full url including 'index.html' for navigation bar if you are using ajax -->
+<ul id="nav">
+	<li id="ajax"><a href="/index.html">Home</a></li>
+	<li id="ajax"><a href="/blog/archives/index.html">Archives</a></li>
+    <li><a href="/atom.xml">RSS</a></li>
+    
+    <li>
+    <div id="dark">
+        <form method="get" action="/search.html" id="search">
+            <input name="query" type="text" placeholder="Search..." x-webkit-speech />
+        </form>
+    </div>
+    </li>
+        
+</ul>
+
+
+
+
+</header>
+
+<div id="toload">
+<!-- begin toload --> 
+    <div id="content" class="inner">
+        <article class="post">
+	<h2 class="title">HTTP ノート その1</h2>
+	<div class="entry-content"><p>Fiddlerで色々</p>
+
+<h2>リクエスト・メッセージ</h2>
+
+<h3>1行目 : リクエストライン</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>GET /hoge/fuga.php HTTP/1.1</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>GET</h4>
+
+<ul>
+<li>メソッド</li>
+</ul>
+
+
+<h4>/hoge/fuga.php</h4>
+
+<ul>
+<li>リクエストURL</li>
+</ul>
+
+
+<h4>HTTP/1.1</h4>
+
+<ul>
+<li>プロトコルバージョン</li>
+</ul>
+
+
+<h3>2行目~ : ヘッダ</h3>
+
+<p>リクエストラインの次の行からは<code>ヘッダ</code>(1行毎にヘッダと呼ぶ?)
+ * Accept
+ * Referer
+ * Accept-Language
+ * HOST
+ * &hellip;</p>
+
+<p>色々</p>
+
+<h2>レスポンス・メッセージ</h2>
+
+<h3>ステータスライン</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>HTTP/1.1 200 OK</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>HTTP/1.1</h4>
+
+<ul>
+<li>プロトコルバージョン</li>
+</ul>
+
+
+<h4>200</h4>
+
+<ul>
+<li>ステータスコード</li>
+</ul>
+
+
+<table>
+<thead>
+<tr>
+<th></th>
+<th align="left">ステータスコード</th>
+<th align="left">概要</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td align="left">1xx</td>
+<td align="left">処理が継続中</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">2xx</td>
+<td align="left">正常終了</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">3xx</td>
+<td align="left">リダイレクト</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">4xx</td>
+<td align="left">クライアントエラー</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">5xx</td>
+<td align="left">サーバーエラー</td>
+</tr>
+</tbody>
+</table>
+
+
+<h4>OK</h4>
+
+<ul>
+<li>テキストフレーズ</li>
+</ul>
+
+
+<h3>ヘッダ(レスポンスヘッダ)</h3>
+
+<h4>Content-Length</h4>
+
+<ul>
+<li>ボディのバイト数</li>
+</ul>
+
+
+<h4>Content-Type</h4>
+
+<ul>
+<li>MIMEタイプというリソースの種類の指定</li>
+</ul>
+
+
+<table>
+<thead>
+<tr>
+<th></th>
+<th align="left">MIMEタイプ</th>
+<th align="left">意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td align="left">text/plain</td>
+<td align="left">テキスト</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">text/html</td>
+<td align="left">HTML文書</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">application/xml</td>
+<td align="left">XML文書</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">text/css</td>
+<td align="left">CSS</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">image/gif</td>
+<td align="left">GIF</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">image/jepg</td>
+<td align="left">JPEG</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">image/gif</td>
+<td align="left">PNG</td>
+</tr>
+<tr>
+<td></td>
+<td align="left">application/pdf</td>
+<td align="left">PDF</td>
+</tr>
+</tbody>
+</table>
+
+
+<p><code>charset=UTF-8</code>はHTTPレスポンスに対する文字エンコーディング</p>
+
+<h3>POSTメソッド</h3>
+
+<ul>
+<li>GETメソッドと異なりメッセージボディをもつ</li>
+</ul>
+
+
+<h4>メッセージボディ</h4>
+
+<ul>
+<li>POSTメソッドのリクエストのボディに送信される値がある</li>
+<li>送信される値に関するヘッダがContent-Length, Content-Type</li>
+<li>Content-Length = ボディのバイト数</li>
+<li></li>
+</ul>
+
+</div>
+
+<div class="meta">
+	
+</div>
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+    </div>
+    <footer id="footer">
+    <div style="display:inline">
+    Copyright &copy; 2014
+
+    kanpe777
+. Powered by <a href="http://octopress.org">Octopress</a> | 
+    Theme <a href="http://github.com/panks/fabric">fabric</a> by <a href="http://panks.me">Pankaj Kumar</a>
+</div>
+
+
+    </footer>
+    <script src="/javascripts/fabric.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+
+
+
+
+<!-- end toload --> 
+</div>
+</div>
+<script src="/javascripts/jquery.ui.totop.js" type="text/javascript"></script>
+<script type="text/javascript">
+/*<![CDATA[*/
+;(function($){$().UItoTop({easingType:'easeOutCirc'});})(jQuery); 
+/*]]>*/
+</script><!-- remove it to remove the scroll to top button -->
+</body>
+</html>
